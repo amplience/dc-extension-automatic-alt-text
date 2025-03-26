@@ -58,20 +58,16 @@ function Extension() {
         const isImage = referencedImage?._meta?.schema === IMAGE_LINK;
         const imageChanged = imageId !== referencedImage?.id;
 
+        if (imageId && imageChanged) {
+          dcExtensionsSdk?.field.setValue().catch(() => {});
+          setInputValue("");
+        }
+
         if (isImage && imageChanged) {
           setImageId(referencedImage.id);
-          const asset = await contentHubService?.getAssetById(
-            referencedImage.id
+          setAltText(
+            await contentHubService.getAssetAltTextById(referencedImage?.id)
           );
-          const assetAltText =
-            asset?.relationships?.hasAltText?.[0]?.variants?.[0].values;
-
-          if (assetAltText) {
-            setAltText({
-              defaultAltText: assetAltText.defaultDescription,
-              locales: assetAltText.descriptions,
-            });
-          }
         }
       } catch (error) {
         console.error("Error fetching data:", error);

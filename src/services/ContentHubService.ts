@@ -60,4 +60,21 @@ export default class ContentHubService {
       throw e;
     }
   }
+
+  async getAssetAltTextById(id: string) {
+    try {
+      const asset = await this.getAssetById(id);
+      const assetAltText =
+        asset?.relationships?.hasAltText?.[0]?.variants?.[0].values;
+      return {
+        defaultAltText: assetAltText.defaultDescription,
+        locales: assetAltText.descriptions,
+      };
+    } catch (e) {
+      console.error(
+        `Failure during getAssetAltTextById: ${(e as Error).message}`
+      );
+      throw e;
+    }
+  }
 }

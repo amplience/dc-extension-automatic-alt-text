@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useFrameAutoResizer } from "./useFrameAutoResizer";
 import ContentHubService from "../services/ContentHubService";
 
-export const DEFAULT_LOCALES = [{ locale: "en-GB" }];
+const DEFAULT_LOCALES = [{ locale: "en-GB" }];
 
 interface ExtensionOptions {
   collapseByDefault?: boolean;
