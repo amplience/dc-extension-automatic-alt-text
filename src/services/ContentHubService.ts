@@ -67,8 +67,12 @@ export default class ContentHubService {
       const assetAltText =
         asset?.relationships?.hasAltText?.[0]?.variants?.[0].values;
       return {
-        defaultAltText: assetAltText.defaultDescription,
-        locales: assetAltText.descriptions,
+        locales: assetAltText
+          ? {
+              default: assetAltText.defaultDescription,
+              ...assetAltText.descriptions,
+            }
+          : {},
       };
     } catch (e) {
       console.error(

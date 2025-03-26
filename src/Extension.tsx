@@ -1,16 +1,14 @@
 import { Box, Flex } from "@mantine/core";
 import { ExtensionsProvider } from "./hooks/providers/ExtensionProvider";
 import { useExtension } from "./hooks/useExtension";
-import { IconButton, Skeleton, TextInput } from "@amplience/ui-core";
+import { Button, Skeleton, TextInput } from "@amplience/ui-core";
 import { useEffect, useState } from "react";
 import RelativeJSONPointer from "./utils/RelativeJSONPointer";
-import { IconArrowRight } from "@tabler/icons-react";
 
 const IMAGE_LINK =
   "http://bigcontent.io/cms/schema/v1/core#/definitions/image-link";
 
 export interface AltText {
-  defaultAltText: string;
   locales: Record<string, string>;
 }
 
@@ -35,11 +33,10 @@ function Extension() {
     setInputValue(value);
   };
 
-  const handleActionClick = () => {
-    dcExtensionsSdk?.field
-      .setValue(altText?.defaultAltText || "")
-      .catch(() => {});
-    setInputValue(altText?.defaultAltText || "");
+  const handleClick = (locale: string) => {
+    const selectedAltText = altText?.locales[locale];
+    dcExtensionsSdk?.field.setValue(selectedAltText || "").catch(() => {});
+    setInputValue(selectedAltText || "");
   };
 
   useEffect(() => setInputValue(initialValue || ""), [initialValue]);
@@ -93,19 +90,26 @@ function Extension() {
       <ExtensionsProvider dcExtensionsSdk={dcExtensionsSdk}>
         <Box w="100%" m="0 auto">
           <Skeleton visible={!ready}>
-            <Flex direction="row" align="flex-end" gap="md">
-              <TextInput
-                label={schema.title}
-                fieldSchema={schema}
-                value={String(inputValue)}
-                onChange={handleInputChange}
-                readOnly={readOnly}
-                rightSection={
-                  <IconButton onClick={handleActionClick}>
-                    <IconArrowRight size={18} stroke={1.5} />
-                  </IconButton>
-                }
-              />
+            <TextInput
+              label={schema.title}
+              fieldSchema={schema}
+              value={String(inputValue)}
+              onChange={handleInputChange}
+              readOnly={readOnly}
+            />
+            <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
+              {altText?.locales &&
+                Object.keys(altText.locales).map((locale) => (
+                  <Button
+                    variant="outline"
+                    p="s"
+                    m="s"
+                    key={locale}
+                    onClick={() => handleClick(locale)}
+                  >
+                    {locale}
+                  </Button>
+                ))}
             </Flex>
           </Skeleton>
         </Box>
