@@ -33,8 +33,8 @@ export function useExtension() {
         setContentHubService(new ContentHubService(sdk, sdk.hub.id));
 
         const params: { image: string } = {
-          ...sdk.params.instance,
           ...sdk.params.installation,
+          ...sdk.params.instance,
         } as { image: string };
         const fieldValue = await sdk.field.getValue();
         setInitialValue(fieldValue);
