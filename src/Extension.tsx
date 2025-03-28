@@ -1,12 +1,9 @@
-import { Box, Flex } from "@mantine/core";
+import { Box } from "@mantine/core";
 import { ExtensionsProvider } from "./hooks/providers/ExtensionProvider";
 import { useExtension } from "./hooks/useExtension";
-import { Button, Skeleton, TextInput } from "@amplience/ui-core";
+import { Skeleton } from "@amplience/ui-core";
 import { useEffect, useState } from "react";
-
-export interface AltText {
-  locales: Record<string, string>;
-}
+import { AltTextInput } from "./components/AltTextInput";
 
 function Extension() {
   const {
@@ -20,15 +17,9 @@ function Extension() {
   } = useExtension();
   const [inputValue, setInputValue] = useState("");
 
-  const handleInputChange = (value: string) => {
+  const handleChange = (value: string) => {
     dcExtensionsSdk?.field.setValue(value).catch(() => {});
     setInputValue(value);
-  };
-
-  const handleClick = (locale: string) => {
-    const selectedAltText = imageAltText?.locales[locale];
-    dcExtensionsSdk?.field.setValue(selectedAltText || "").catch(() => {});
-    setInputValue(selectedAltText || "");
   };
 
   useEffect(() => setInputValue(initialValue || ""), [initialValue]);
@@ -52,27 +43,13 @@ function Extension() {
       <ExtensionsProvider dcExtensionsSdk={dcExtensionsSdk}>
         <Box w="100%" m="0 auto">
           <Skeleton visible={!ready}>
-            <TextInput
-              label={schema.title}
-              fieldSchema={schema}
-              value={String(inputValue)}
-              onChange={handleInputChange}
+            <AltTextInput
+              value={inputValue}
+              altText={imageAltText}
+              schema={schema}
               readOnly={readOnly}
+              onChange={handleChange}
             />
-            <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
-              {imageAltText?.locales &&
-                Object.keys(imageAltText.locales).map((locale) => (
-                  <Button
-                    variant="outline"
-                    p="s"
-                    m="s"
-                    key={locale}
-                    onClick={() => handleClick(locale)}
-                  >
-                    {locale}
-                  </Button>
-                ))}
-            </Flex>
           </Skeleton>
         </Box>
       </ExtensionsProvider>
