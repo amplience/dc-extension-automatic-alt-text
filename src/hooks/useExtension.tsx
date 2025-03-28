@@ -2,8 +2,15 @@ import { init, ContentFieldExtension } from "dc-extensions-sdk";
 import { useEffect, useState } from "react";
 import { useFrameAutoResizer } from "./useFrameAutoResizer";
 import ContentHubService from "../services/ContentHubService";
+import RelativeJSONPointer from "../utils/RelativeJSONPointer";
 
 const DEFAULT_LOCALES = [{ locale: "en-GB" }];
+const IMAGE_LINK =
+  "http://bigcontent.io/cms/schema/v1/core#/definitions/image-link";
+
+export interface AltText {
+  locales: Record<string, string>;
+}
 
 interface ExtensionOptions {
   collapseByDefault?: boolean;
@@ -23,6 +30,8 @@ export function useExtension() {
   const [imagePointer, setImagePointer] = useState("");
   const [formValue, setFormValue] = useState({});
   const [fieldPath, setFieldPath] = useState("");
+  const [imageAltText, setImageAltText] = useState<AltText>();
+  const [imageRefId, setImageRefId] = useState<string>();
 
   useFrameAutoResizer(dcExtensionsSdk);
 
@@ -57,17 +66,58 @@ export function useExtension() {
       });
   }, []);
 
+  useEffect(() => {
+    const fetchImageAltText = async () => {
+      if (!dcExtensionsSdk || !contentHubService) {
+        return;
+      }
+      try {
+        const referencedImage = RelativeJSONPointer.evaluate(
+          imagePointer,
+          formValue,
+          fieldPath
+        );
+        const isImage = referencedImage?._meta?.schema === IMAGE_LINK;
+        const imageChanged = imageRefId !== referencedImage?.id;
+        if (imageRefId && imageChanged) {
+          dcExtensionsSdk.field.setValue();
+        }
+
+        if (isImage && imageChanged) {
+          setImageRefId(referencedImage.id);
+          setImageAltText(
+            await contentHubService.getAssetAltTextById(referencedImage?.id)
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchImageAltText();
+
+    return () => {
+      // Cleanup logic here
+    };
+  }, [
+    contentHubService,
+    dcExtensionsSdk,
+    fieldPath,
+    formValue,
+    imagePointer,
+    imageRefId,
+  ]);
+
   return {
     readOnly,
     ready,
     schema,
     locales,
     options,
-    initialValue,
-    imagePointer,
-    formValue,
     fieldPath,
     dcExtensionsSdk,
-    contentHubService,
+    imageAltText,
+    imageRefId,
+    initialValue,
   };
 }

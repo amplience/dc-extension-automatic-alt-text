@@ -3,10 +3,6 @@ import { ExtensionsProvider } from "./hooks/providers/ExtensionProvider";
 import { useExtension } from "./hooks/useExtension";
 import { Button, Skeleton, TextInput } from "@amplience/ui-core";
 import { useEffect, useState } from "react";
-import RelativeJSONPointer from "./utils/RelativeJSONPointer";
-
-const IMAGE_LINK =
-  "http://bigcontent.io/cms/schema/v1/core#/definitions/image-link";
 
 export interface AltText {
   locales: Record<string, string>;
@@ -17,16 +13,12 @@ function Extension() {
     ready,
     dcExtensionsSdk,
     schema,
-    imagePointer,
-    formValue,
-    fieldPath,
-    contentHubService,
     readOnly,
     initialValue,
+    imageAltText,
+    imageRefId,
   } = useExtension();
-  const [imageId, setImageId] = useState("");
   const [inputValue, setInputValue] = useState("");
-  const [altText, setAltText] = useState<AltText>();
 
   const handleInputChange = (value: string) => {
     dcExtensionsSdk?.field.setValue(value).catch(() => {});
@@ -34,7 +26,7 @@ function Extension() {
   };
 
   const handleClick = (locale: string) => {
-    const selectedAltText = altText?.locales[locale];
+    const selectedAltText = imageAltText?.locales[locale];
     dcExtensionsSdk?.field.setValue(selectedAltText || "").catch(() => {});
     setInputValue(selectedAltText || "");
   };
@@ -42,48 +34,18 @@ function Extension() {
   useEffect(() => setInputValue(initialValue || ""), [initialValue]);
 
   useEffect(() => {
-    const fetchImage = async () => {
-      if (!dcExtensionsSdk || !contentHubService) {
-        return;
-      }
-      try {
-        const referencedImage = RelativeJSONPointer.evaluate(
-          imagePointer,
-          formValue,
-          fieldPath
-        );
-        const isImage = referencedImage?._meta?.schema === IMAGE_LINK;
-        const imageChanged = imageId !== referencedImage?.id;
+    const checkForClearedField = async () => {
+      const value = await dcExtensionsSdk?.field.getValue();
 
-        if (imageId && imageChanged) {
-          dcExtensionsSdk?.field.setValue().catch(() => {});
-          setInputValue("");
-        }
-
-        if (isImage && imageChanged) {
-          setImageId(referencedImage.id);
-          setAltText(
-            await contentHubService.getAssetAltTextById(referencedImage?.id)
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
+      if (!value && inputValue) {
+        setInputValue("");
       }
     };
 
-    fetchImage();
+    checkForClearedField();
 
-    return () => {
-      // Cleanup logic here
-    };
-  }, [
-    dcExtensionsSdk,
-    imagePointer,
-    formValue,
-    fieldPath,
-    imageId,
-    contentHubService,
-  ]);
+    return () => {};
+  }, [dcExtensionsSdk?.field, imageRefId, inputValue]);
 
   return (
     <>
@@ -98,8 +60,8 @@ function Extension() {
               readOnly={readOnly}
             />
             <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
-              {altText?.locales &&
-                Object.keys(altText.locales).map((locale) => (
+              {imageAltText?.locales &&
+                Object.keys(imageAltText.locales).map((locale) => (
                   <Button
                     variant="outline"
                     p="s"
