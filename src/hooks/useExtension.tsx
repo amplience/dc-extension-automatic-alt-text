@@ -1,19 +1,53 @@
-import { init, ContentFieldExtension } from "dc-extensions-sdk";
-import { useEffect, useState } from "react";
+import { init, ContentFieldExtension, LocalModel } from "dc-extensions-sdk";
+import { useCallback, useEffect, useState } from "react";
 import { useFrameAutoResizer } from "./useFrameAutoResizer";
 import ContentHubService from "../services/ContentHubService";
 import RelativeJSONPointer from "../utils/RelativeJSONPointer";
 
-const DEFAULT_LOCALES = [{ locale: "en-GB" }];
-const IMAGE_LINK =
+const DEFAULT_LOCALES = [
+  {
+    locale: "en-GB",
+    language: "en",
+    country: "GB",
+    index: 0,
+    label: "en-GB",
+    selected: true,
+  },
+];
+const IMAGE_LINK_SCHEMA =
   "http://bigcontent.io/cms/schema/v1/core#/definitions/image-link";
+const LOCALIZED_VALUE_SCHEMA =
+  "http://bigcontent.io/cms/schema/v1/core#/definitions/localized-value";
+
+export interface Locale {
+  locale: string;
+}
 
 export interface AltText {
   locales: Record<string, string>;
 }
 
+export interface LocalizedStringValue {
+  locale: string;
+  value: string;
+}
+
+export interface LocalizedString {
+  values: LocalizedStringValue[];
+  _meta: {
+    schema: string;
+  };
+}
+
+export type FieldValue = string | LocalizedString;
+
 interface ExtensionOptions {
   collapseByDefault?: boolean;
+}
+
+export enum FIELD_TYPE {
+  STRING = "STRING",
+  LOCALIZED_VALUE = "LOCALIZED_VALUE",
 }
 
 export function useExtension() {
@@ -24,35 +58,63 @@ export function useExtension() {
   const [schema, setSchema] = useState<Record<string, unknown>>({});
   const [ready, setReady] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
-  const [locales, setLocales] = useState(DEFAULT_LOCALES);
+  const [locales, setLocales] = useState<LocalModel[]>(DEFAULT_LOCALES);
   const [options, setOptions] = useState({} as ExtensionOptions);
-  const [initialValue, setInitialValue] = useState<string>();
+  const [initialValue, setInitialValue] = useState<FieldValue | null>();
+  const [value, setValue] = useState<FieldValue | undefined>();
   const [imagePointer, setImagePointer] = useState("");
   const [formValue, setFormValue] = useState({});
   const [fieldPath, setFieldPath] = useState("");
+  const [fieldType, setFieldType] = useState(FIELD_TYPE.STRING);
   const [imageAltText, setImageAltText] = useState<AltText>();
   const [imageRefId, setImageRefId] = useState<string>();
 
   useFrameAutoResizer(dcExtensionsSdk);
 
+  const clearFieldValue = useCallback(() => {
+    const value =
+      fieldType === FIELD_TYPE.LOCALIZED_VALUE
+        ? {
+            values: [],
+            _meta: {
+              schema: LOCALIZED_VALUE_SCHEMA,
+            },
+          }
+        : "";
+    setValue(value);
+    dcExtensionsSdk?.field.setValue(value);
+  }, [dcExtensionsSdk?.field, fieldType]);
+
+  const setFieldValue = useCallback(
+    (value?: string | FieldValue) => {
+      setValue(value);
+      dcExtensionsSdk?.field.setValue(value);
+    },
+    [dcExtensionsSdk?.field]
+  );
+
   useEffect(() => {
-    init<ContentFieldExtension<string>>()
+    init<ContentFieldExtension<string | FieldValue>>()
       .then(async (sdk) => {
         setDcExtensionsSdk(sdk);
         setContentHubService(new ContentHubService(sdk, sdk.hub.id));
-
         const params: { image: string } = {
           ...sdk.params.installation,
           ...sdk.params.instance,
         } as { image: string };
         const fieldValue = await sdk.field.getValue();
         setInitialValue(fieldValue);
+        setFieldValue(fieldValue);
         setSchema(sdk.field.schema);
         setOptions({ collapseByDefault: sdk.collapseByDefault });
         setLocales(sdk.locales.available);
         setImagePointer(params.image);
         setFormValue(await sdk.form.getValue());
         setFieldPath(await sdk.field.getPath());
+
+        if (sdk.field.schema.type !== "string") {
+          setFieldType(FIELD_TYPE.LOCALIZED_VALUE);
+        }
 
         sdk.form.onFormValueChange(setFormValue);
         sdk.form.onReadOnlyChange((isReadOnly) => {
@@ -77,10 +139,11 @@ export function useExtension() {
           formValue,
           fieldPath
         );
-        const isImage = referencedImage?._meta?.schema === IMAGE_LINK;
+        const isImage = referencedImage?._meta?.schema === IMAGE_LINK_SCHEMA;
         const imageChanged = imageRefId !== referencedImage?.id;
+
         if (imageRefId && imageChanged) {
-          dcExtensionsSdk.field.setValue();
+          clearFieldValue();
         }
 
         if (isImage && imageChanged) {
@@ -106,6 +169,8 @@ export function useExtension() {
     formValue,
     imagePointer,
     imageRefId,
+    setFieldValue,
+    clearFieldValue,
   ]);
 
   return {
@@ -119,5 +184,9 @@ export function useExtension() {
     imageAltText,
     imageRefId,
     initialValue,
+    value,
+    fieldType,
+    setFieldValue,
+    clearFieldValue,
   };
 }
