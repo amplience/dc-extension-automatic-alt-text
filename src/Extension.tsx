@@ -1,8 +1,11 @@
 import { Box } from "@mantine/core";
 import { ExtensionsProvider } from "./hooks/providers/ExtensionProvider";
-import { FIELD_TYPE, FieldValue, useExtension } from "./hooks/useExtension";
+import {
+  FIELD_TYPE,
+  LocalizedString,
+  useExtension,
+} from "./hooks/useExtension";
 import { Skeleton } from "@amplience/ui-core";
-import { useEffect } from "react";
 import { AltTextInput } from "./components/AltTextInput";
 import { LocalizedAltTextInput } from "./components/LocalizedAltTextInput";
 
@@ -13,38 +16,11 @@ function Extension() {
     schema,
     readOnly,
     imageAltText,
-    imageRefId,
     value,
     fieldType,
     locales,
     setFieldValue,
-    clearFieldValue,
   } = useExtension();
-
-  const handleChange = (value: FieldValue) => {
-    setFieldValue(value);
-  };
-
-  useEffect(() => {
-    const checkForClearedField = async () => {
-      const value = await dcExtensionsSdk?.field.getValue();
-
-      if (!value) {
-        clearFieldValue();
-      }
-    };
-
-    checkForClearedField();
-
-    return () => {};
-  }, [
-    clearFieldValue,
-    dcExtensionsSdk?.field,
-    fieldType,
-    imageRefId,
-    setFieldValue,
-    value,
-  ]);
 
   return (
     <>
@@ -53,21 +29,21 @@ function Extension() {
           <Skeleton visible={!ready}>
             {fieldType === FIELD_TYPE.STRING && (
               <AltTextInput
-                value={value}
+                value={value as string}
                 altText={imageAltText}
                 schema={schema}
                 readOnly={readOnly}
-                onChange={handleChange}
+                onChange={setFieldValue}
               />
             )}
             {fieldType === FIELD_TYPE.LOCALIZED_VALUE && (
               <LocalizedAltTextInput
-                value={value}
+                value={value as LocalizedString}
                 altText={imageAltText}
                 locales={locales}
                 schema={schema}
                 readOnly={readOnly}
-                onChange={handleChange}
+                onChange={setFieldValue}
               />
             )}
           </Skeleton>

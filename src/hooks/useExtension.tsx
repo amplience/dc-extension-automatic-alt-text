@@ -16,8 +16,6 @@ const DEFAULT_LOCALES = [
 ];
 const IMAGE_LINK_SCHEMA =
   "http://bigcontent.io/cms/schema/v1/core#/definitions/image-link";
-const LOCALIZED_VALUE_SCHEMA =
-  "http://bigcontent.io/cms/schema/v1/core#/definitions/localized-value";
 
 export interface Locale {
   locale: string;
@@ -70,20 +68,6 @@ export function useExtension() {
   const [imageRefId, setImageRefId] = useState<string>();
 
   useFrameAutoResizer(dcExtensionsSdk);
-
-  const clearFieldValue = useCallback(() => {
-    const value =
-      fieldType === FIELD_TYPE.LOCALIZED_VALUE
-        ? {
-            values: [],
-            _meta: {
-              schema: LOCALIZED_VALUE_SCHEMA,
-            },
-          }
-        : "";
-    setValue(value);
-    dcExtensionsSdk?.field.setValue(value);
-  }, [dcExtensionsSdk?.field, fieldType]);
 
   const setFieldValue = useCallback(
     (value?: string | FieldValue) => {
@@ -142,10 +126,6 @@ export function useExtension() {
         const isImage = referencedImage?._meta?.schema === IMAGE_LINK_SCHEMA;
         const imageChanged = imageRefId !== referencedImage?.id;
 
-        if (imageRefId && imageChanged) {
-          clearFieldValue();
-        }
-
         if (isImage && imageChanged) {
           setImageRefId(referencedImage.id);
           setImageAltText(
@@ -170,7 +150,6 @@ export function useExtension() {
     imagePointer,
     imageRefId,
     setFieldValue,
-    clearFieldValue,
   ]);
 
   return {
@@ -187,6 +166,5 @@ export function useExtension() {
     value,
     fieldType,
     setFieldValue,
-    clearFieldValue,
   };
 }
