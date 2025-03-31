@@ -173,6 +173,12 @@ export function useExtension() {
     clearFieldValue,
   ]);
 
+  const refetchAltText = async () => {
+    setImageAltText(
+      await contentHubService?.getAssetAltTextById(imageRefId || "")
+    );
+  };
+
   return {
     readOnly,
     ready,
@@ -188,5 +194,6 @@ export function useExtension() {
     fieldType,
     setFieldValue,
     clearFieldValue,
+    refetchAltText,
   };
 }
