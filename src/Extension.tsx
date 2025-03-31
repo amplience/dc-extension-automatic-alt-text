@@ -19,7 +19,9 @@ function Extension() {
     value,
     fieldType,
     locales,
+    isLoading,
     setFieldValue,
+    refetchAltText,
   } = useExtension();
 
   return (
@@ -34,6 +36,8 @@ function Extension() {
                 schema={schema}
                 readOnly={readOnly}
                 onChange={setFieldValue}
+                refetch={refetchAltText}
+                isLoading={isLoading}
               />
             )}
             {fieldType === FIELD_TYPE.LOCALIZED_VALUE && (
@@ -44,6 +48,8 @@ function Extension() {
                 schema={schema}
                 readOnly={readOnly}
                 onChange={setFieldValue}
+                refetch={refetchAltText}
+                isLoading={isLoading}
               />
             )}
           </Skeleton>
