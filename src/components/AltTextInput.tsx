@@ -1,5 +1,5 @@
 import { Button, TextInput } from "@amplience/ui-core";
-import { Flex } from "@mantine/core";
+import { Flex, Loader } from "@mantine/core";
 import { AltText } from "../hooks/useExtension";
 
 interface AltTextInputProps {
@@ -7,7 +7,9 @@ interface AltTextInputProps {
   altText?: AltText;
   schema: Record<string, unknown>;
   readOnly: boolean;
+  isLoading: boolean;
   onChange: (value: string) => void;
+  refetch: () => Promise<void>;
 }
 
 export function AltTextInput({
@@ -15,7 +17,9 @@ export function AltTextInput({
   altText,
   schema,
   readOnly,
+  isLoading,
   onChange,
+  refetch,
 }: AltTextInputProps) {
   const handleClick = (locale: string) => {
     const localisedAltText = altText?.locales[locale];
@@ -25,8 +29,18 @@ export function AltTextInput({
     }
   };
 
+  const handleRefetch = async () => {
+    await refetch();
+  };
+
   return (
     <>
+      <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
+        {isLoading && <Loader color="blue" />}
+        <Button variant="outline" p="s" m="s" onClick={handleRefetch}>
+          Get Alt Text
+        </Button>
+      </Flex>
       <TextInput
         label={schema.title}
         fieldSchema={schema}

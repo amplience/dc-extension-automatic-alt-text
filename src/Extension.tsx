@@ -1,7 +1,7 @@
-import { Box, Flex } from "@mantine/core";
+import { Box } from "@mantine/core";
 import { ExtensionsProvider } from "./hooks/providers/ExtensionProvider";
 import { FIELD_TYPE, FieldValue, useExtension } from "./hooks/useExtension";
-import { Button, Skeleton } from "@amplience/ui-core";
+import { Skeleton } from "@amplience/ui-core";
 import { useEffect } from "react";
 import { AltTextInput } from "./components/AltTextInput";
 import { LocalizedAltTextInput } from "./components/LocalizedAltTextInput";
@@ -17,6 +17,7 @@ function Extension() {
     value,
     fieldType,
     locales,
+    isLoading,
     setFieldValue,
     clearFieldValue,
     refetchAltText,
@@ -24,10 +25,6 @@ function Extension() {
 
   const handleChange = (value: FieldValue) => {
     setFieldValue(value);
-  };
-
-  const handleRefetch = () => {
-    refetchAltText();
   };
 
   useEffect(() => {
@@ -55,12 +52,6 @@ function Extension() {
     <>
       <ExtensionsProvider dcExtensionsSdk={dcExtensionsSdk}>
         <Box w="100%" m="0 auto">
-          <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
-            <Button variant="outline" p="s" m="s" onClick={handleRefetch}>
-              Get Alt Text
-            </Button>
-          </Flex>
-
           <Skeleton visible={!ready}>
             {fieldType === FIELD_TYPE.STRING && (
               <AltTextInput
@@ -69,6 +60,8 @@ function Extension() {
                 schema={schema}
                 readOnly={readOnly}
                 onChange={handleChange}
+                refetch={refetchAltText}
+                isLoading={isLoading}
               />
             )}
             {fieldType === FIELD_TYPE.LOCALIZED_VALUE && (
@@ -79,6 +72,8 @@ function Extension() {
                 schema={schema}
                 readOnly={readOnly}
                 onChange={handleChange}
+                refetch={refetchAltText}
+                isLoading={isLoading}
               />
             )}
           </Skeleton>

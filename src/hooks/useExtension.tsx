@@ -68,6 +68,7 @@ export function useExtension() {
   const [fieldType, setFieldType] = useState(FIELD_TYPE.STRING);
   const [imageAltText, setImageAltText] = useState<AltText>();
   const [imageRefId, setImageRefId] = useState<string>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useFrameAutoResizer(dcExtensionsSdk);
 
@@ -174,9 +175,13 @@ export function useExtension() {
   ]);
 
   const refetchAltText = async () => {
+    setIsLoading(true);
+
     setImageAltText(
       await contentHubService?.getAssetAltTextById(imageRefId || "")
     );
+
+    setIsLoading(false);
   };
 
   return {
@@ -192,6 +197,7 @@ export function useExtension() {
     initialValue,
     value,
     fieldType,
+    isLoading,
     setFieldValue,
     clearFieldValue,
     refetchAltText,
