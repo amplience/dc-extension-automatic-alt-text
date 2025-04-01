@@ -1,5 +1,6 @@
 import { Button, TextInput } from "@amplience/ui-core";
 import { Flex, Loader } from "@mantine/core";
+import { IconAlt } from "@tabler/icons-react";
 import { useAltText } from "../hooks/useAltText";
 import { useEffect, useState } from "react";
 import { useAutoCaption } from "../hooks/useAutoCaption";
@@ -54,8 +55,8 @@ export function AltTextInput({
       {altText?.locales && Object.values(altText?.locales).length > 1 && (
         <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
           {loading && <Loader color="blue" />}
-          <Button variant="outline" p="s" m="s" onClick={handleRefetch}>
-            Get Alt Text
+          <Button variant="secondary" p="s" m="s" rightSection={<IconAlt size={24} />}onClick={handleRefetch}>
+            Refresh
           </Button>
         </Flex>
       )}
@@ -67,7 +68,7 @@ export function AltTextInput({
         onChange={onChange}
         readOnly={readOnly}
       />
-      <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
+      <Flex justify="flex-start" gap="sm" mt="sm" mb="sm" wrap="wrap">
         {altText?.locales &&
           Object.keys(altText.locales).map((locale) => (
             <Button

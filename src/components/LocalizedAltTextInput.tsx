@@ -1,6 +1,6 @@
 import { Button, IconButton, LocaleBadge, TextInput } from "@amplience/ui-core";
 import { LocalizedString } from "../hooks/useExtension";
-import { IconArrowRight } from "@tabler/icons-react";
+import { IconAlt } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { LocalModel } from "dc-extensions-sdk";
 import { Flex, Loader } from "@mantine/core";
@@ -132,9 +132,9 @@ export function LocalizedAltTextInput({
     <>
       <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
         {loading && <Loader color="blue" />}
-        <Button variant="outline" p="s" m="s" onClick={handleRefetch}>
-          Get Alt Text
-        </Button>
+        <Button variant="secondary" p="s" m="s" rightSection={<IconAlt size={24} />}onClick={handleRefetch}>
+            Refresh
+          </Button>
       </Flex>
       {Object.entries(localizedValue || {}).map(([locale, localeValue]) => (
         <TextInput
@@ -151,7 +151,7 @@ export function LocalizedAltTextInput({
             <>
               {altText?.locales[locale] && (
                 <IconButton onClick={() => handleClick(locale)}>
-                  <IconArrowRight size={18} stroke={1.5} />
+                  <IconAlt size={18} stroke={1.5} />
                 </IconButton>
               )}
             </>
