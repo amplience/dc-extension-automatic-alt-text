@@ -92,12 +92,10 @@ export function useExtension(): UseExtensionContext {
 
   const setFieldValue = useCallback(
     (value?: string | FieldValue) => {
-      const sanitizedValue =
-        fieldType === FIELD_TYPE.STRING && !value ? "" : value;
-      setValue(sanitizedValue);
-      dcExtensionsSdk?.field.setValue(sanitizedValue);
+      setValue(value);
+      dcExtensionsSdk?.field.setValue(value);
     },
-    [dcExtensionsSdk?.field, fieldType]
+    [dcExtensionsSdk?.field]
   );
 
   useEffect(() => {
