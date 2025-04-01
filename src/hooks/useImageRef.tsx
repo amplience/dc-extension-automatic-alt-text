@@ -10,6 +10,8 @@ export function useImageRef() {
   const { formValue, imagePointer, fieldPath, ready } = useExtensionSdk();
 
   const [imageRef, setImageRef] = useState<MediaImageLink>();
+  const [initialImageRef, setInitialImageRef] = useState<MediaImageLink>();
+  const [initialLookup, setInitialLookup] = useState(true);
 
   useEffect(() => {
     if (!ready) {
@@ -22,13 +24,26 @@ export function useImageRef() {
       fieldPath
     );
 
-    if (
-      imageRef?.id !== image?.id &&
-      image._meta.schema === IMAGE_LINK_SCHEMA
-    ) {
+    const isImage = image?._meta.schema === IMAGE_LINK_SCHEMA;
+    const hasChanged = imageRef?.id !== image?.id;
+
+    if (isImage && hasChanged) {
       setImageRef(image);
     }
-  }, [fieldPath, formValue, imagePointer, imageRef?.id, ready]);
 
-  return { imageRef };
+    if (initialLookup) {
+      setInitialImageRef(image);
+      setInitialLookup(false);
+    }
+  }, [
+    fieldPath,
+    formValue,
+    imagePointer,
+    imageRef,
+    initialImageRef,
+    initialLookup,
+    ready,
+  ]);
+
+  return { imageRef, initialImageRef };
 }

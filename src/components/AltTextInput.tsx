@@ -1,7 +1,8 @@
 import { Button, TextInput } from "@amplience/ui-core";
 import { Flex, Loader } from "@mantine/core";
 import { useAltText } from "../hooks/useAltText";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAutoCaption } from "../hooks/useAutoCaption";
 
 interface AltTextInputProps {
   value: string;
@@ -17,8 +18,10 @@ export function AltTextInput({
   onChange,
 }: AltTextInputProps) {
   const { altText, fetchAltText } = useAltText();
+  const { autoCaptionEnabled } = useAutoCaption();
 
   const [loading, setLoading] = useState(false);
+  const [preventAutoCaption, setPreventAutoCaption] = useState(false);
 
   const handleClick = (locale: string) => {
     const localisedAltText = altText?.locales[locale];
@@ -30,9 +33,21 @@ export function AltTextInput({
 
   const handleRefetch = async () => {
     setLoading(true);
+    setPreventAutoCaption(true);
     await fetchAltText();
     setLoading(false);
+    setPreventAutoCaption(false);
   };
+
+  useEffect(() => {
+    if (preventAutoCaption) {
+      return;
+    }
+    const defaultAltText = altText?.locales.default;
+    if (autoCaptionEnabled && defaultAltText) {
+      onChange(defaultAltText);
+    }
+  }, [altText, autoCaptionEnabled, onChange, preventAutoCaption]);
 
   return (
     <>

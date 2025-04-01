@@ -67,9 +67,10 @@ export interface UseExtensionContext {
   formValue: Record<string, unknown>;
   imagePointer: string;
   contentHubService: ContentHubService | undefined;
+  autoCaption: boolean;
 }
 
-export function useExtension() {
+export function useExtension(): UseExtensionContext {
   const [dcExtensionsSdk, setDcExtensionsSdk] =
     useState<ContentFieldExtension | null>(null);
   const [schema, setSchema] = useState<Record<string, unknown>>({});
@@ -80,6 +81,7 @@ export function useExtension() {
   const [initialValue, setInitialValue] = useState<FieldValue | null>();
   const [value, setValue] = useState<FieldValue | undefined>();
   const [imagePointer, setImagePointer] = useState("");
+  const [autoCaption, setAutoCaption] = useState(false);
   const [formValue, setFormValue] = useState({});
   const [fieldPath, setFieldPath] = useState("");
   const [fieldType, setFieldType] = useState(FIELD_TYPE.STRING);
@@ -90,10 +92,12 @@ export function useExtension() {
 
   const setFieldValue = useCallback(
     (value?: string | FieldValue) => {
-      setValue(value);
-      dcExtensionsSdk?.field.setValue(value);
+      const sanitizedValue =
+        fieldType === FIELD_TYPE.STRING && !value ? "" : value;
+      setValue(sanitizedValue);
+      dcExtensionsSdk?.field.setValue(sanitizedValue);
     },
-    [dcExtensionsSdk?.field]
+    [dcExtensionsSdk?.field, fieldType]
   );
 
   useEffect(() => {
@@ -111,6 +115,7 @@ export function useExtension() {
         setOptions({ collapseByDefault: sdk.collapseByDefault });
         setLocales(sdk.locales.available);
         setImagePointer(params.image);
+        setAutoCaption(params.autoCaption);
         setFormValue(await sdk.form.getValue());
         setFieldPath(await sdk.field.getPath());
         setContentHubService(new ContentHubService(sdk, sdk.hub.id));
@@ -145,5 +150,6 @@ export function useExtension() {
     formValue,
     imagePointer,
     contentHubService,
+    autoCaption,
   };
 }
