@@ -35,16 +35,19 @@ export function AltTextInput({
 
   return (
     <>
-      <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
-        {isLoading && <Loader color="blue" />}
-        <Button variant="outline" p="s" m="s" onClick={handleRefetch}>
-          Get Alt Text
-        </Button>
-      </Flex>
+      {altText?.locales && Object.values(altText?.locales).length > 1 && (
+        <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
+          {isLoading && <Loader color="blue" />}
+          <Button variant="outline" p="s" m="s" onClick={handleRefetch}>
+            Get Alt Text
+          </Button>
+        </Flex>
+      )}
+
       <TextInput
         label={schema.title}
         fieldSchema={schema}
-        value={String(value)}
+        value={String(value || "")}
         onChange={onChange}
         readOnly={readOnly}
       />
