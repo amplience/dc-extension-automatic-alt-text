@@ -1,11 +1,12 @@
 import { Button, IconButton, LocaleBadge, TextInput } from "@amplience/ui-core";
 import { LocalizedString } from "../hooks/useExtension";
 import { IconArrowRight } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LocalModel } from "dc-extensions-sdk";
 import { Flex, Loader } from "@mantine/core";
 
-import { useAltText } from "../hooks/useAltText";
+import { AltText, useAltText } from "../hooks/useAltText";
+import { useAutoCaption } from "../hooks/useAutoCaption";
 
 type LocalizedValue = Record<string, string>;
 
@@ -17,16 +18,15 @@ interface LocalizedAltTextInputProps {
   onChange: (value: LocalizedString) => void;
 }
 
-function defaultValues(
+function initialValues(
   locales: LocalModel[],
   initalValue: LocalizedString
 ): LocalizedValue {
   const values = locales.reduce((acc, value) => {
-    if (initalValue && initalValue.values && initalValue.values.length) {
-      const text =
-        initalValue.values.find(({ locale }) => value.locale === locale) || "";
-
-      return Object.assign(acc, { [value.locale]: text.value });
+    const localisedValue =
+      initalValue?.values?.find(({ locale }) => value.locale === locale) || "";
+    if (localisedValue) {
+      return Object.assign(acc, { [value.locale]: localisedValue.value });
     }
 
     return Object.assign(acc, { [value.locale]: "" });
@@ -35,7 +35,23 @@ function defaultValues(
   return values;
 }
 
-function transformToLocalizedString(localizedValue: LocalizedValue) {
+function autoCaptionValues(locales: LocalModel[], altText: AltText) {
+  const values = locales.reduce((acc, value) => {
+    if (altText?.locales[value.locale]) {
+      return Object.assign(acc, {
+        [value.locale]: altText?.locales[value.locale],
+      });
+    }
+
+    return Object.assign(acc, { [value.locale]: "" });
+  }, {});
+
+  return values;
+}
+
+function transformToLocalizedString(
+  localizedValue: LocalizedValue
+): LocalizedString {
   return {
     values: Object.entries(localizedValue || {})
       .filter(([, value]) => value)
@@ -58,11 +74,14 @@ export function LocalizedAltTextInput({
   onChange,
 }: LocalizedAltTextInputProps) {
   const { altText, fetchAltText } = useAltText();
+  const { autoCaptionEnabled } = useAutoCaption();
 
   const [loading, setLoading] = useState(false);
   const [localizedValue, setLocalizedValue] = useState<LocalizedValue>(
-    defaultValues(locales, value)
+    initialValues(locales, value)
   );
+
+  const [preventAutoCaption, setPreventAutoCaption] = useState(false);
 
   const handleClick = (locale: string) => {
     const updated = Object.assign({}, localizedValue, {
@@ -84,19 +103,30 @@ export function LocalizedAltTextInput({
 
   const handleRefetch = async () => {
     setLoading(true);
+    setPreventAutoCaption(true);
+
     await fetchAltText();
 
-    const updatedObject = Object.entries(localizedValue).reduce(
-      (acc, [key]) => {
-        acc[key] = altText?.locales[key] || "";
-        return acc;
-      },
-      {} as Record<string, string>
-    );
-
-    setLocalizedValue(updatedObject);
+    if (altText) {
+      const captionedValues = autoCaptionValues(locales, altText);
+      setLocalizedValue(captionedValues);
+      onChange(transformToLocalizedString(captionedValues));
+    }
     setLoading(false);
+    setPreventAutoCaption(false);
   };
+
+  useEffect(() => {
+    if (preventAutoCaption) {
+      return;
+    }
+
+    if (autoCaptionEnabled && altText) {
+      const captionedValues = autoCaptionValues(locales, altText);
+      setLocalizedValue(captionedValues);
+      onChange(transformToLocalizedString(captionedValues));
+    }
+  }, [altText, autoCaptionEnabled, locales, onChange, preventAutoCaption]);
 
   return (
     <>
