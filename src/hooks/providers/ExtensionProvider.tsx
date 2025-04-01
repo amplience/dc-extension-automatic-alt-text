@@ -1,25 +1,18 @@
-import { ReactNode, createContext, useContext } from "react";
+import { ReactNode } from "react";
 
-import type { ContentFieldExtension } from "dc-extensions-sdk";
+import { UseExtensionContext, useExtension } from "../useExtension";
+import { ExtensionContext } from "./ExtensionContext";
 
-export const ExtensionsContext = createContext<ContentFieldExtension | null>(
-  null
-);
-
-export const useExtensionsSdk = () => useContext(ExtensionsContext);
-
-export interface ExtensionsContextProps {
+export interface ExtensionContextProps {
   children: ReactNode;
-  dcExtensionsSdk?: ContentFieldExtension | null;
+  extension?: UseExtensionContext | null;
 }
 
-export function ExtensionsProvider({
-  children,
-  dcExtensionsSdk,
-}: ExtensionsContextProps) {
+export function ExtensionsProvider({ children }: ExtensionContextProps) {
+  const extension = useExtension();
   return (
-    <ExtensionsContext.Provider value={dcExtensionsSdk || null}>
+    <ExtensionContext.Provider value={extension || null}>
       {children}
-    </ExtensionsContext.Provider>
+    </ExtensionContext.Provider>
   );
 }

@@ -2,7 +2,6 @@ import { init, ContentFieldExtension, LocalModel } from "dc-extensions-sdk";
 import { useCallback, useEffect, useState } from "react";
 import { useFrameAutoResizer } from "./useFrameAutoResizer";
 import ContentHubService from "../services/ContentHubService";
-import RelativeJSONPointer from "../utils/RelativeJSONPointer";
 
 const DEFAULT_LOCALES = [
   {
@@ -14,15 +13,9 @@ const DEFAULT_LOCALES = [
     selected: true,
   },
 ];
-const IMAGE_LINK_SCHEMA =
-  "http://bigcontent.io/cms/schema/v1/core#/definitions/image-link";
 
 export interface Locale {
   locale: string;
-}
-
-export interface AltText {
-  locales: Record<string, string>;
 }
 
 export interface LocalizedStringValue {
@@ -39,7 +32,18 @@ export interface LocalizedString {
 
 export type FieldValue = string | LocalizedString;
 
-interface ExtensionOptions {
+export interface ExtensionParms {
+  instance: {
+    image: string;
+    autoCaption: boolean;
+  };
+  installation: {
+    image: string;
+    autoCaption: boolean;
+  };
+}
+
+export interface ExtensionOptions {
   collapseByDefault?: boolean;
 }
 
@@ -48,11 +52,26 @@ export enum FIELD_TYPE {
   LOCALIZED_VALUE = "LOCALIZED_VALUE",
 }
 
+export interface UseExtensionContext {
+  readOnly: boolean;
+  ready: boolean;
+  schema: Record<string, unknown>;
+  locales: LocalModel[];
+  options: ExtensionOptions;
+  fieldPath: string;
+  dcExtensionsSdk: ContentFieldExtension | null;
+  initialValue: FieldValue | null | undefined;
+  value: FieldValue | null | undefined;
+  fieldType: FIELD_TYPE;
+  setFieldValue: (value?: string | FieldValue) => void;
+  formValue: Record<string, unknown>;
+  imagePointer: string;
+  contentHubService: ContentHubService | undefined;
+}
+
 export function useExtension() {
   const [dcExtensionsSdk, setDcExtensionsSdk] =
     useState<ContentFieldExtension | null>(null);
-  const [contentHubService, setContentHubService] =
-    useState<ContentHubService>();
   const [schema, setSchema] = useState<Record<string, unknown>>({});
   const [ready, setReady] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
@@ -64,9 +83,8 @@ export function useExtension() {
   const [formValue, setFormValue] = useState({});
   const [fieldPath, setFieldPath] = useState("");
   const [fieldType, setFieldType] = useState(FIELD_TYPE.STRING);
-  const [imageAltText, setImageAltText] = useState<AltText>();
-  const [imageRefId, setImageRefId] = useState<string>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [contentHubService, setContentHubService] =
+    useState<ContentHubService>();
 
   useFrameAutoResizer(dcExtensionsSdk);
 
@@ -79,14 +97,13 @@ export function useExtension() {
   );
 
   useEffect(() => {
-    init<ContentFieldExtension<string | FieldValue>>()
+    init<ContentFieldExtension<string | FieldValue, ExtensionParms>>()
       .then(async (sdk) => {
         setDcExtensionsSdk(sdk);
-        setContentHubService(new ContentHubService(sdk, sdk.hub.id));
-        const params: { image: string } = {
+        const params = {
           ...sdk.params.installation,
           ...sdk.params.instance,
-        } as { image: string };
+        };
         const fieldValue = await sdk.field.getValue();
         setInitialValue(fieldValue);
         setFieldValue(fieldValue);
@@ -96,6 +113,7 @@ export function useExtension() {
         setImagePointer(params.image);
         setFormValue(await sdk.form.getValue());
         setFieldPath(await sdk.field.getPath());
+        setContentHubService(new ContentHubService(sdk, sdk.hub.id));
 
         if (sdk.field.schema.type !== "string") {
           setFieldType(FIELD_TYPE.LOCALIZED_VALUE);
@@ -105,63 +123,12 @@ export function useExtension() {
         sdk.form.onReadOnlyChange((isReadOnly) => {
           setReadOnly(isReadOnly);
         });
-
         return () => {};
       })
       .finally(() => {
         setReady(true);
       });
   }, []);
-
-  useEffect(() => {
-    const fetchImageAltText = async () => {
-      if (!dcExtensionsSdk || !contentHubService) {
-        return;
-      }
-      try {
-        const referencedImage = RelativeJSONPointer.evaluate(
-          imagePointer,
-          formValue,
-          fieldPath
-        );
-        const isImage = referencedImage?._meta?.schema === IMAGE_LINK_SCHEMA;
-        const imageChanged = imageRefId !== referencedImage?.id;
-
-        if (isImage && imageChanged) {
-          setImageRefId(referencedImage.id);
-          setImageAltText(
-            await contentHubService.getAssetAltTextById(referencedImage?.id)
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchImageAltText();
-
-    return () => {
-      // Cleanup logic here
-    };
-  }, [
-    contentHubService,
-    dcExtensionsSdk,
-    fieldPath,
-    formValue,
-    imagePointer,
-    imageRefId,
-    setFieldValue,
-  ]);
-
-  const refetchAltText = async () => {
-    setIsLoading(true);
-
-    setImageAltText(
-      await contentHubService?.getAssetAltTextById(imageRefId || "")
-    );
-
-    setIsLoading(false);
-  };
 
   return {
     readOnly,
@@ -171,13 +138,12 @@ export function useExtension() {
     options,
     fieldPath,
     dcExtensionsSdk,
-    imageAltText,
-    imageRefId,
     initialValue,
     value,
     fieldType,
-    isLoading,
     setFieldValue,
-    refetchAltText,
+    formValue,
+    imagePointer,
+    contentHubService,
   };
 }

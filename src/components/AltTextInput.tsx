@@ -1,26 +1,25 @@
 import { Button, TextInput } from "@amplience/ui-core";
 import { Flex, Loader } from "@mantine/core";
-import { AltText } from "../hooks/useExtension";
+import { useAltText } from "../hooks/useAltText";
+import { useState } from "react";
 
 interface AltTextInputProps {
   value: string;
-  altText?: AltText;
   schema: Record<string, unknown>;
   readOnly: boolean;
-  isLoading: boolean;
   onChange: (value: string) => void;
-  refetch: () => Promise<void>;
 }
 
 export function AltTextInput({
   value,
-  altText,
   schema,
   readOnly,
-  isLoading,
   onChange,
-  refetch,
 }: AltTextInputProps) {
+  const { altText, fetchAltText } = useAltText();
+
+  const [loading, setLoading] = useState(false);
+
   const handleClick = (locale: string) => {
     const localisedAltText = altText?.locales[locale];
 
@@ -30,13 +29,15 @@ export function AltTextInput({
   };
 
   const handleRefetch = async () => {
-    await refetch();
+    setLoading(true);
+    await fetchAltText();
+    setLoading(false);
   };
 
   return (
     <>
       <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
-        {isLoading && <Loader color="blue" />}
+        {loading && <Loader color="blue" />}
         <Button variant="outline" p="s" m="s" onClick={handleRefetch}>
           Get Alt Text
         </Button>

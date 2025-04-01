@@ -1,21 +1,20 @@
 import { Button, IconButton, LocaleBadge, TextInput } from "@amplience/ui-core";
-import { AltText, LocalizedString } from "../hooks/useExtension";
+import { LocalizedString } from "../hooks/useExtension";
 import { IconArrowRight } from "@tabler/icons-react";
 import { useState } from "react";
 import { LocalModel } from "dc-extensions-sdk";
 import { Flex, Loader } from "@mantine/core";
 
+import { useAltText } from "../hooks/useAltText";
+
 type LocalizedValue = Record<string, string>;
 
 interface LocalizedAltTextInputProps {
   value: LocalizedString;
-  altText?: AltText;
   schema: Record<string, unknown>;
   readOnly: boolean;
   locales: LocalModel[];
-  isLoading: boolean;
   onChange: (value: LocalizedString) => void;
-  refetch: () => Promise<void>;
 }
 
 function defaultValues(
@@ -53,14 +52,14 @@ function transformToLocalizedString(localizedValue: LocalizedValue) {
 
 export function LocalizedAltTextInput({
   value,
-  altText,
   schema,
   readOnly,
   locales,
-  isLoading,
   onChange,
-  refetch,
 }: LocalizedAltTextInputProps) {
+  const { altText, fetchAltText } = useAltText();
+
+  const [loading, setLoading] = useState(false);
   const [localizedValue, setLocalizedValue] = useState<LocalizedValue>(
     defaultValues(locales, value)
   );
@@ -84,7 +83,8 @@ export function LocalizedAltTextInput({
   };
 
   const handleRefetch = async () => {
-    await refetch();
+    setLoading(true);
+    await fetchAltText();
 
     const updatedObject = Object.entries(localizedValue).reduce(
       (acc, [key]) => {
@@ -95,12 +95,13 @@ export function LocalizedAltTextInput({
     );
 
     setLocalizedValue(updatedObject);
+    setLoading(false);
   };
 
   return (
     <>
       <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
-        {isLoading && <Loader color="blue" />}
+        {loading && <Loader color="blue" />}
         <Button variant="outline" p="s" m="s" onClick={handleRefetch}>
           Get Alt Text
         </Button>
