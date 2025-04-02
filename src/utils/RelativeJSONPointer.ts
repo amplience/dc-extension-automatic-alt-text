@@ -137,7 +137,7 @@ export function compile(tokens: ParsedPointer): string {
   if (isRelativePointer(tokens)) {
     return `${tokens[0]}/${tokens.map(escape as any).join("/")}`;
   } else {
-    return "/" + tokens.map(escape).join("/");
+    return "/" + tokens.map(escape as any).join("/");
   }
 }
 
@@ -181,7 +181,7 @@ export function evaluate(
     }
 
     const parentDepth = tokens[0];
-    let rootPointer = startingPointer;
+    let rootPointer = startingPointer as any;
     for (let i = 0; i < parentDepth; i++) {
       rootPointer = parent(rootPointer) as string;
     }
