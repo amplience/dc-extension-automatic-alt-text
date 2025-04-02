@@ -130,12 +130,20 @@ export function LocalizedAltTextInput({
 
   return (
     <>
-      <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
-        {loading && <Loader color="blue" />}
-        <Button variant="secondary" p="s" m="s" rightSection={<IconAlt size={24} />}onClick={handleRefetch}>
+      {altText?.locales && Object.values(altText?.locales).length >= 1 && (
+        <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
+          {loading && <Loader color="blue" />}
+          <Button
+            variant="secondary"
+            p="s"
+            m="s"
+            rightSection={<IconAlt size={24} />}
+            onClick={handleRefetch}
+          >
             Refresh
           </Button>
-      </Flex>
+        </Flex>
+      )}
       {Object.entries(localizedValue || {}).map(([locale, localeValue]) => (
         <TextInput
           key={locale}
