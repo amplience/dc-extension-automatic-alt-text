@@ -135,7 +135,7 @@ export function compile(tokens: ParsedPointer): string {
     return "";
   }
   if (isRelativePointer(tokens)) {
-    return `${tokens[0]}/${tokens.map(escape).join("/")}`;
+    return `${tokens[0]}/${tokens.map(escape as any).join("/")}`;
   } else {
     return "/" + tokens.map(escape).join("/");
   }
@@ -156,7 +156,7 @@ export function parent(pointer: string): string | undefined {
 }
 
 export function isRelativePointer(
-  pointer: ParsedPointer
+  pointer: ParsedPointer,
 ): pointer is [number, ...Array<string>] {
   return pointer.length > 0 && typeof pointer[0] === "number";
 }
@@ -169,21 +169,21 @@ export function isRelativePointer(
 export function evaluate(
   pointer: string,
   root: any,
-  startingPointer?: string
+  startingPointer?: string,
 ): any | undefined {
   let tokens = parse(pointer);
   if (isRelativePointer(tokens)) {
     if (!startingPointer) {
       throw new InvalidPointerError(
         pointer,
-        "pointer is relative but no starting pointer was provided"
+        "pointer is relative but no starting pointer was provided",
       );
     }
 
     const parentDepth = tokens[0];
     let rootPointer = startingPointer;
     for (let i = 0; i < parentDepth; i++) {
-      rootPointer = parent(rootPointer);
+      rootPointer = parent(rootPointer) as string;
     }
 
     pointer = append(rootPointer, tokens.slice(1) as string[]);
@@ -202,7 +202,7 @@ export function evaluate(
   if (!value && startingPointer) {
     value = [...getParentPath(startingPointer), ...tokens].reduce(
       (val, pathPart) => (typeof val === "object" ? val[pathPart] : undefined),
-      root
+      root,
     );
   }
 
@@ -217,7 +217,7 @@ function getParentPath(path: string | undefined) {
 export function set<T = any>(
   root: T,
   targetPointer: string,
-  targetValue: any
+  targetValue: any,
 ): T {
   const tokens = parse(targetPointer);
   if (tokens.length === 0) {
@@ -246,7 +246,7 @@ export function set<T = any>(
 
 export function deletePointer<T = any>(
   root: T,
-  targetPointer: string
+  targetPointer: string,
 ): boolean {
   const tokens = parse(targetPointer);
   if (tokens.length === 0) {
