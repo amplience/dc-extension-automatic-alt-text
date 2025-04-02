@@ -8,7 +8,7 @@ export const useExtensionSdk = () => {
   const context = useContext(ExtensionContext);
   if (!context) {
     throw new Error(
-      "useExtensionContext must be used within an ExtensionProvider"
+      "useExtensionContext must be used within an ExtensionProvider",
     );
   }
 

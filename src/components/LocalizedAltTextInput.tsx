@@ -20,7 +20,7 @@ interface LocalizedAltTextInputProps {
 
 function initialValues(
   locales: LocalModel[],
-  initalValue: LocalizedString
+  initalValue: LocalizedString,
 ): LocalizedValue {
   const values = locales.reduce((acc, value) => {
     const localisedValue =
@@ -50,7 +50,7 @@ function autoCaptionValues(locales: LocalModel[], altText: AltText) {
 }
 
 function transformToLocalizedString(
-  localizedValue: LocalizedValue
+  localizedValue: LocalizedValue,
 ): LocalizedString {
   return {
     values: Object.entries(localizedValue || {})
@@ -78,7 +78,7 @@ export function LocalizedAltTextInput({
 
   const [loading, setLoading] = useState(false);
   const [localizedValue, setLocalizedValue] = useState<LocalizedValue>(
-    initialValues(locales, value)
+    initialValues(locales, value),
   );
 
   const [preventAutoCaption, setPreventAutoCaption] = useState(false);
@@ -132,9 +132,15 @@ export function LocalizedAltTextInput({
     <>
       <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
         {loading && <Loader color="blue" />}
-        <Button variant="secondary" p="s" m="s" rightSection={<IconAlt size={24} />}onClick={handleRefetch}>
-            Refresh
-          </Button>
+        <Button
+          variant="secondary"
+          p="s"
+          m="s"
+          rightSection={<IconAlt size={24} />}
+          onClick={handleRefetch}
+        >
+          Refresh
+        </Button>
       </Flex>
       {Object.entries(localizedValue || {}).map(([locale, localeValue]) => (
         <TextInput
