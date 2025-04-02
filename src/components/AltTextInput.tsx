@@ -6,8 +6,6 @@ import { useEffect, useState } from "react";
 import { useAutoCaption } from "../hooks/useAutoCaption";
 import { useDisclosure } from "@mantine/hooks";
 
-import testData from "../components/TEMP.json";
-
 interface AltTextInputProps {
   value: string;
   schema: Record<string, unknown>;
