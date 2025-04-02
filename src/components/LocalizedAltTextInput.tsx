@@ -1,6 +1,6 @@
-import { Button, IconButton, LocaleBadge, TextInput } from "@amplience/ui-core";
+import { Button, CollapsibleContainer, IconButton, LocaleBadge, TextInput, Tooltip } from "@amplience/ui-core";
 import { LocalizedString } from "../hooks/useExtension";
-import { IconAlt } from "@tabler/icons-react";
+import { IconAlt, IconRefresh,IconWorldShare } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { LocalModel } from "dc-extensions-sdk";
 import { Flex, Loader } from "@mantine/core";
@@ -132,10 +132,13 @@ export function LocalizedAltTextInput({
     <>
       <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
         {loading && <Loader color="blue" />}
-        <Button variant="secondary" p="s" m="s" rightSection={<IconAlt size={24} />}onClick={handleRefetch}>
-            Refresh
+        <Tooltip label="Fetch ALT Text from Content Hub for all available locales" position="top" offset={5}  >
+        <Button variant="ghost" p="s" m="s" leftSection={<IconAlt size={24} color="#b2c0c6" />} rightSection={<IconRefresh size={24} color="#002C42" />} onClick={handleRefetch}>
+        Refresh
           </Button>
+        </Tooltip>
       </Flex>
+      <CollapsibleContainer variant="primary" title={schema.title} description={"All localised ALT text values"} open={true}>
       {Object.entries(localizedValue || {}).map(([locale, localeValue]) => (
         <TextInput
           key={locale}
@@ -147,17 +150,23 @@ export function LocalizedAltTextInput({
           titleRightSection={<LocaleBadge locale={locale} />}
           mt="sm"
           mb="sm"
+          style={{marginLeft:0}}
+          leftSectionPointerEvents="none"
+          leftSection={<IconAlt size={20} stroke={1.5} color='#b2c0c6' />}
           rightSection={
             <>
               {altText?.locales[locale] && (
-                <IconButton onClick={() => handleClick(locale)}>
-                  <IconAlt size={18} stroke={1.5} />
-                </IconButton>
+                <Tooltip label="Refresh with the latest ALT text for this locale" position="top" offset={5}  >
+                  <IconButton variant="subtle" onClick={() => handleClick(locale)}>
+                    <IconWorldShare size={20} stroke={2} />
+                  </IconButton>
+                  </Tooltip> 
               )}
             </>
           }
         />
       ))}
+      </CollapsibleContainer>
     </>
   );
 }

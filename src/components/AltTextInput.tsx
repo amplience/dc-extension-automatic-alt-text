@@ -1,6 +1,6 @@
-import { Button, TextInput } from "@amplience/ui-core";
+import { Button, TextInput, Tooltip } from "@amplience/ui-core";
 import { Flex, Loader } from "@mantine/core";
-import { IconAlt } from "@tabler/icons-react";
+import { IconAlt, IconRefresh } from "@tabler/icons-react";
 import { useAltText } from "../hooks/useAltText";
 import { useEffect, useState } from "react";
 import { useAutoCaption } from "../hooks/useAutoCaption";
@@ -55,9 +55,11 @@ export function AltTextInput({
       {altText?.locales && Object.values(altText?.locales).length > 1 && (
         <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
           {loading && <Loader color="blue" />}
-          <Button variant="secondary" p="s" m="s" rightSection={<IconAlt size={24} />}onClick={handleRefetch}>
+          <Tooltip label="Fetch ALT Text from Content Hub" position="top" offset={5}  >
+          <Button variant="ghost" p="s" m="s" leftSection={<IconAlt size={24} color="#b2c0c6" />} rightSection={<IconRefresh size={24} color="#002C42" />} onClick={handleRefetch}>
             Refresh
           </Button>
+          </Tooltip>
         </Flex>
       )}
 
@@ -67,6 +69,8 @@ export function AltTextInput({
         value={String(value || "")}
         onChange={onChange}
         readOnly={readOnly}
+        leftSectionPointerEvents="none"
+        leftSection={<IconAlt size={20} stroke={1.5} color='#b2c0c6' />}
       />
       <Flex justify="flex-start" gap="sm" mt="sm" mb="sm" wrap="wrap">
         {altText?.locales &&
