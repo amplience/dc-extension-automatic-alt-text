@@ -1,12 +1,11 @@
 import { TextInput } from "@amplience/ui-core";
 import { Flex, Loader, Collapse, Group, Button } from "@mantine/core";
+import { Button as AmplienceButton } from "@amplience/ui-core";
 import { IconAlt } from "@tabler/icons-react";
 import { useAltText } from "../hooks/useAltText";
 import { useEffect, useState } from "react";
 import { useAutoCaption } from "../hooks/useAutoCaption";
 import { useDisclosure } from "@mantine/hooks";
-
-import testData from "../components/TEMP.json";
 
 interface AltTextInputProps {
   value: string;
@@ -27,6 +26,8 @@ export function AltTextInput({
   const [loading, setLoading] = useState(false);
   const [preventAutoCaption, setPreventAutoCaption] = useState(false);
   const [opened, { toggle }] = useDisclosure(false);
+
+  const VISIBLE_LOCALES = 10;
 
   const handleClick = (locale: string) => {
     const localisedAltText = altText?.locales[locale];
@@ -54,35 +55,23 @@ export function AltTextInput({
     }
   }, [altText, autoCaptionEnabled, onChange, preventAutoCaption]);
 
-  const buttonRows = () => {
-    const firstRow: React.ReactNode[] = [];
-    const otherRows: React.ReactNode[] = [];
+  const visibleLocales =
+    Object.keys(altText?.locales || {}).splice(0, VISIBLE_LOCALES) || [];
+  const overflowLocales =
+    Object.keys(altText?.locales || {}).splice(VISIBLE_LOCALES) || [];
 
-    if (altText?.locales) {
-      Object.keys(altText.locales).forEach((locale, i) => {
-        const btn = (
-          <Button
-            variant="default"
-            size="xs"
-            radius="lg"
-            key={locale}
-            onClick={() => handleClick(locale)}
-          >
-            {locale}
-          </Button>
-        );
-
-        if (i >= 10) {
-          otherRows.push(btn);
-        } else {
-          firstRow.push(btn);
-        }
-      });
-    }
-    return {
-      firstRow,
-      otherRows,
-    };
+  const localeButton = (locale: string) => {
+    return (
+      <Button
+        variant="default"
+        size="xs"
+        radius="lg"
+        key={locale}
+        onClick={() => handleClick(locale)}
+      >
+        {locale}
+      </Button>
+    );
   };
 
   return (
@@ -110,34 +99,38 @@ export function AltTextInput({
         readOnly={readOnly}
       />
 
-      <Flex
-        direction="row"
-        justify="space-between"
-        gap="sm"
-        mt="sm"
-        mb="sm"
-        wrap="wrap"
-      >
-        {buttonRows().firstRow}
-      </Flex>
+      {Boolean(visibleLocales.length) && (
+        <Flex
+          direction="row"
+          justify="flex-start"
+          gap="sm"
+          mt="sm"
+          mb="sm"
+          wrap="wrap"
+        >
+          {visibleLocales.map(localeButton)}
+        </Flex>
+      )}
 
-      {buttonRows().otherRows.length >= 1 && (
+      {Boolean(overflowLocales.length) && (
         <>
           <Collapse in={opened}>
             <Flex
               direction="row"
-              justify="space-between"
+              justify="flex-start"
               gap="sm"
               mt="sm"
               mb="sm"
               wrap="wrap"
             >
-              {buttonRows().otherRows}
+              {overflowLocales.map(localeButton)}
             </Flex>
           </Collapse>
 
           <Group justify="right" mt="sm" mb="sm">
-            <Button onClick={toggle}>Show more</Button>
+            <AmplienceButton variant="ghost" onClick={toggle}>
+              Show {opened ? "less" : "more"}
+            </AmplienceButton>
           </Group>
         </>
       )}
