@@ -1,6 +1,5 @@
 import {
   Button,
-  CollapsibleContainer,
   IconButton,
   LocaleBadge,
   TextInput,
@@ -156,47 +155,41 @@ export function LocalizedAltTextInput({
           </Button>
         </Tooltip>
       </Flex>
-      <CollapsibleContainer
-        variant="primary"
-        title={schema.title}
-        description={"All localised ALT text values"}
-        open={true}
-      >
-        {Object.entries(localizedValue || {}).map(([locale, localeValue]) => (
-          <TextInput
-            key={locale}
-            title={schema.title}
-            fieldSchema={schema}
-            value={localeValue}
-            onChange={(value: string) => handleChange(locale, value)}
-            readOnly={readOnly}
-            titleRightSection={<LocaleBadge locale={locale} />}
-            mt="sm"
-            mb="sm"
-            style={{ marginLeft: 0 }}
-            leftSectionPointerEvents="none"
-            leftSection={<IconAlt size={20} stroke={1.5} color="#b2c0c6" />}
-            rightSection={
-              <>
-                {altText?.locales[locale] && (
-                  <Tooltip
-                    label="Refresh with the latest ALT text for this locale"
-                    position="top"
-                    offset={5}
+
+      {Object.entries(localizedValue || {}).map(([locale, localeValue]) => (
+        <TextInput
+          key={locale}
+          title={schema.title}
+          fieldSchema={schema}
+          value={localeValue}
+          onChange={(value: string) => handleChange(locale, value)}
+          readOnly={readOnly}
+          titleRightSection={<LocaleBadge locale={locale} />}
+          mt="sm"
+          mb="sm"
+          style={{ marginLeft: 0 }}
+          leftSectionPointerEvents="none"
+          leftSection={<IconAlt size={20} stroke={1.5} color="#b2c0c6" />}
+          rightSection={
+            <>
+              {altText?.locales[locale] && (
+                <Tooltip
+                  label="Refresh with the latest ALT text for this locale"
+                  position="top"
+                  offset={5}
+                >
+                  <IconButton
+                    variant="subtle"
+                    onClick={() => handleClick(locale)}
                   >
-                    <IconButton
-                      variant="subtle"
-                      onClick={() => handleClick(locale)}
-                    >
-                      <IconWorldShare size={20} stroke={2} />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              </>
-            }
-          />
-        ))}
-      </CollapsibleContainer>
+                    <IconWorldShare size={20} stroke={2} />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </>
+          }
+        />
+      ))}
     </>
   );
 }
