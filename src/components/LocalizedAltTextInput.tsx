@@ -83,13 +83,20 @@ export function LocalizedAltTextInput({
 
   const [preventAutoCaption, setPreventAutoCaption] = useState(false);
 
-  const handleClick = (locale: string) => {
+  const handleClick = async (locale: string) => {
+    setLoading(true);
+    setPreventAutoCaption(true);
+
+    await fetchAltText();
     const updated = Object.assign({}, localizedValue, {
       [locale]: altText?.locales[locale],
     });
 
     setLocalizedValue(updated);
     onChange(transformToLocalizedString(updated));
+
+    setLoading(false);
+    setPreventAutoCaption(false);
   };
 
   const handleChange = (locale: string, value: string) => {
