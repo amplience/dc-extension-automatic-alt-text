@@ -1,9 +1,9 @@
 import { TextInput } from "@amplience/ui-core";
-import { Flex, Loader, Collapse, Group, Button } from "@mantine/core";
+import { Flex, Loader, Group, Button } from "@mantine/core";
 import { Button as AmplienceButton } from "@amplience/ui-core";
 import { IconAlt } from "@tabler/icons-react";
 import { useAltText } from "../hooks/useAltText";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAutoCaption } from "../hooks/useAutoCaption";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -26,8 +26,9 @@ export function AltTextInput({
   const [loading, setLoading] = useState(false);
   const [preventAutoCaption, setPreventAutoCaption] = useState(false);
   const [opened, { toggle }] = useDisclosure(false);
+  const [canExpand, setCanExpand] = useState(false);
 
-  const VISIBLE_LOCALES = 10;
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const handleClick = (locale: string) => {
     const localisedAltText = altText?.locales[locale];
@@ -55,10 +56,20 @@ export function AltTextInput({
     }
   }, [altText, autoCaptionEnabled, onChange, preventAutoCaption]);
 
-  const visibleLocales =
-    Object.keys(altText?.locales || {}).splice(0, VISIBLE_LOCALES) || [];
-  const overflowLocales =
-    Object.keys(altText?.locales || {}).splice(VISIBLE_LOCALES) || [];
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (contentRef.current) {
+        setCanExpand(
+          contentRef.current.scrollHeight > contentRef.current.clientHeight
+        );
+      }
+    };
+
+    checkOverflow();
+
+    window.addEventListener("resize", checkOverflow);
+    return () => window.removeEventListener("resize", checkOverflow);
+  }, []);
 
   const localeButton = (locale: string) => {
     return (
@@ -66,6 +77,7 @@ export function AltTextInput({
         variant="default"
         size="xs"
         radius="lg"
+        miw="80px"
         key={locale}
         onClick={() => handleClick(locale)}
       >
@@ -74,9 +86,11 @@ export function AltTextInput({
     );
   };
 
+  const availableLocales = Object.keys(altText?.locales || {});
+
   return (
     <>
-      {altText?.locales && Object.values(altText?.locales).length >= 1 && (
+      {Boolean(availableLocales.length) && (
         <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
           {loading && <Loader color="blue" />}
           <Button
@@ -99,7 +113,7 @@ export function AltTextInput({
         readOnly={readOnly}
       />
 
-      {Boolean(visibleLocales.length) && (
+      {Boolean(availableLocales.length) && (
         <Flex
           direction="row"
           justify="flex-start"
@@ -107,32 +121,19 @@ export function AltTextInput({
           mt="sm"
           mb="sm"
           wrap="wrap"
+          style={{ overflow: "hidden", maxHeight: opened ? "unset" : "32px" }}
+          ref={contentRef}
         >
-          {visibleLocales.map(localeButton)}
+          {availableLocales.map(localeButton)}
         </Flex>
       )}
 
-      {Boolean(overflowLocales.length) && (
-        <>
-          <Collapse in={opened}>
-            <Flex
-              direction="row"
-              justify="flex-start"
-              gap="sm"
-              mt="sm"
-              mb="sm"
-              wrap="wrap"
-            >
-              {overflowLocales.map(localeButton)}
-            </Flex>
-          </Collapse>
-
-          <Group justify="right" mt="sm" mb="sm">
-            <AmplienceButton variant="ghost" onClick={toggle}>
-              Show {opened ? "less" : "more"}
-            </AmplienceButton>
-          </Group>
-        </>
+      {(canExpand || opened) && (
+        <Group justify="right" mt="sm" mb="sm">
+          <AmplienceButton variant="ghost" onClick={toggle}>
+            Show {opened ? "less" : "more"}
+          </AmplienceButton>
+        </Group>
       )}
     </>
   );
