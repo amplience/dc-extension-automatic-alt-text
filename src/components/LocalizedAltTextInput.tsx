@@ -171,6 +171,7 @@ export function LocalizedAltTextInput({
         <TextInput
           key={locale}
           title={schema.title}
+          description={schema.description}
           fieldSchema={schema}
           value={localeValue}
           onChange={(value: string) => handleChange(locale, value)}

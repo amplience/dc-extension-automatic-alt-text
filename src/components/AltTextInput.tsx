@@ -1,7 +1,7 @@
-import { TextInput, Tooltip } from "@amplience/ui-core";
+import { IconButton, TextInput, Tooltip } from "@amplience/ui-core";
 import { Flex, Loader, Group, Button } from "@mantine/core";
 import { Button as AmplienceButton } from "@amplience/ui-core";
-import { IconAlt, IconRefresh } from "@tabler/icons-react";
+import { IconAlt, IconWorldShare } from "@tabler/icons-react";
 import { useAltText } from "../hooks/useAltText";
 import { useEffect, useRef, useState } from "react";
 import { useAutoCaption } from "../hooks/useAutoCaption";
@@ -94,37 +94,12 @@ export function AltTextInput({
       {Boolean(availableLocales.length) && (
         <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
           {loading && <Loader color="blue" />}
-          <Tooltip
-            label="Fetch ALT Text from Content Hub"
-            position="top"
-            offset={5}
-          >
-            <AmplienceButton
-              variant="ghost"
-              p="s"
-              m="s"
-              leftSection={
-                <IconAlt
-                  size={24}
-                  color={theme.other?.colors?.amp_ocean.amp_ocean_30}
-                />
-              }
-              rightSection={
-                <IconRefresh
-                  size={24}
-                  color={theme.other?.colors?.amp_ocean.amp_ocean_100}
-                />
-              }
-              onClick={handleRefetch}
-            >
-              Refresh
-            </AmplienceButton>
-          </Tooltip>
         </Flex>
       )}
 
       <TextInput
         label={schema.title}
+        description={schema.description}
         fieldSchema={schema}
         value={String(value || "")}
         onChange={onChange}
@@ -136,6 +111,21 @@ export function AltTextInput({
             stroke={1.5}
             color={theme.other?.colors?.amp_ocean.amp_ocean_30}
           />
+        }
+        rightSection={
+          <>
+            {altText?.locales && (
+              <Tooltip
+                label="Refresh with the latest ALT text for this locale"
+                position="top"
+                offset={5}
+              >
+                <IconButton variant="subtle" onClick={() => handleRefetch()}>
+                  <IconWorldShare size={20} stroke={2} />
+                </IconButton>
+              </Tooltip>
+            )}
+          </>
         }
       />
 
