@@ -4,20 +4,20 @@ This extension allows customers to use and select alt text that has been automat
 
 Using this extension can help content creators by automating information required for accessibility and compliance.
 
-For developers, it ensures that the alt text is available in the content form and supports localisation in our delivery APIs to minimise requests needed on the web applications. 
+For developers, it ensures that the alt text is available in the content form and supports localisation in our delivery APIs to minimise requests needed on the web applications.
 
 // TODO: Replace screenshot with finalised UX
 ![Automatic Alt Text Extension](media/hero-image.png)
 
 ## Key features
 
- - Works with both standard text and localised text fields
- - Ability to point to any native Amplience image
- - Setting to turn on / off automatic population of fields on image selection
- - Ability to choose locale for text fields
- - Ability to click to refresh all alt text
- - Ability to refresh alt text for individual localised fields
- - Ability to manually create alt text or edit in Dyanmic Content
+- Works with both standard text and localised text fields
+- Ability to point to any native Amplience image
+- Setting to turn on / off automatic population of fields on image selection
+- Ability to choose locale for text fields
+- Ability to click to refresh all alt text
+- Ability to refresh alt text for individual localised fields
+- Ability to manually create alt text or edit in Dyanmic Content
 
 ## How to install
 
@@ -39,11 +39,12 @@ This extension must be [registered](https://amplience.com/docs/development/regis
 ![Permissions](media/permissions.png)
 
 API permissions:
+
 - Read access
 
 Sandbox permissions:
-- Allow same origin
 
+- Allow same origin
 
 ## Prerequisites
 
@@ -77,13 +78,10 @@ Example:
             "withAltText": false
         }
     }
-}   
+}
 ```
 
 See [Turning off Alt Text for a Media Card](https://amplience.com/developers/docs/dev-tools/assets/image-alt-text/#turning-off-alt-text-on-the-media-card) documentation for more details.
-
-
-
 
 ### Assign the extension to schema
 
@@ -211,7 +209,9 @@ If the extension is used for a localised text field with field level localisatio
   "alt": {
     "title": "Alt Text",
     "allOf": [
-        { "$ref": "http://bigcontent.io/cms/schema/v1/localization#/definitions/localized-string" }
+      {
+        "$ref": "http://bigcontent.io/cms/schema/v1/localization#/definitions/localized-string"
+      }
     ],
     "minLength": 0,
     "maxLength": 200,
@@ -225,13 +225,11 @@ If the extension is used for a localised text field with field level localisatio
 }
 ```
 
-
-
 ### Auto caption
 
 If enabled, the extension will automatically fetch generated alt text from the image asset when the image property is populated instead of requiring the user to manually press the generate button.
 
-Alt text will automatically update in two instances: 
+Alt text will automatically update in two instances:
 
 - a new image is added where none exists
 - an existing image is changed
@@ -252,12 +250,10 @@ Alt text will automatically update in two instances:
 - The extension pulls in alt text from the Amplience Content Hub to be used in Dynamic Content. Any edits / changes are in Dynamic Content only and not saved back to Content Hub.
 - Locales in Dynamic Content must match the locales for [Automatic Alt Text](https://amplience.com/developers/docs/release-notes/2024/alt-text-generation/) in Content Hub for population.
 
-
-
 ## Development
 
 > [!IMPORTANT]  
-> This extension is built using an unreleased Amplience component library package. Therefore, any local running of the code or customisation are currently for Amplience engineers only until the component library is publically released. This repository is made public for awareness of how this functionality can be used. 
+> This extension is built using an unreleased Amplience component library package. Therefore, any local running of the code or customisation are currently for Amplience engineers only until the component library is publically released. This repository is made public for awareness of how this functionality can be used.
 
 Run the following to run the extension locally:
 
