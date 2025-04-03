@@ -179,7 +179,10 @@ export function LocalizedAltTextInput({
           titleRightSection={<LocaleBadge locale={locale} />}
           mt="sm"
           mb="sm"
-          style={{ marginLeft: 0 }}
+          ml="0"
+          classNames={{
+            input: "alt-text-input-class",
+          }}
           leftSectionPointerEvents="none"
           leftSection={
             <IconAlt

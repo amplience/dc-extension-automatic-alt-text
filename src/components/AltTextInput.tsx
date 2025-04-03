@@ -104,6 +104,9 @@ export function AltTextInput({
         value={String(value || "")}
         onChange={onChange}
         readOnly={readOnly}
+        classNames={{
+          input: "alt-text-input-class",
+        }}
         leftSectionPointerEvents="none"
         leftSection={
           <IconAlt
