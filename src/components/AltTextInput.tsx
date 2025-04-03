@@ -4,6 +4,7 @@ import { IconAlt, IconRefresh } from "@tabler/icons-react";
 import { useAltText } from "../hooks/useAltText";
 import { useEffect, useState } from "react";
 import { useAutoCaption } from "../hooks/useAutoCaption";
+import { theme } from "@amplience/ui-styles";
 
 interface AltTextInputProps {
   value: string;
@@ -64,8 +65,18 @@ export function AltTextInput({
               variant="ghost"
               p="s"
               m="s"
-              leftSection={<IconAlt size={24} color="#b2c0c6" />}
-              rightSection={<IconRefresh size={24} color="#002C42" />}
+              leftSection={
+                <IconAlt
+                  size={24}
+                  color={theme.other?.colors?.amp_ocean.amp_ocean_30}
+                />
+              }
+              rightSection={
+                <IconRefresh
+                  size={24}
+                  color={theme.other?.colors?.amp_ocean.amp_ocean_100}
+                />
+              }
               onClick={handleRefetch}
             >
               Refresh
@@ -80,8 +91,16 @@ export function AltTextInput({
         value={String(value || "")}
         onChange={onChange}
         readOnly={readOnly}
+        pl="30px"
+        pr="35px"
         leftSectionPointerEvents="none"
-        leftSection={<IconAlt size={20} stroke={1.5} color="#b2c0c6" />}
+        leftSection={
+          <IconAlt
+            size={20}
+            stroke={1.5}
+            color={theme.other?.colors?.amp_ocean.amp_ocean_30}
+          />
+        }
       />
       <Flex justify="flex-start" gap="sm" mt="sm" mb="sm" wrap="wrap">
         {altText?.locales &&

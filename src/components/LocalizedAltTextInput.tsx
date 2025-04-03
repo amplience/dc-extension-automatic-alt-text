@@ -13,6 +13,7 @@ import { Flex, Loader } from "@mantine/core";
 
 import { AltText, useAltText } from "../hooks/useAltText";
 import { useAutoCaption } from "../hooks/useAutoCaption";
+import { theme } from "@amplience/ui-styles";
 
 type LocalizedValue = Record<string, string>;
 
@@ -147,8 +148,18 @@ export function LocalizedAltTextInput({
             variant="ghost"
             p="s"
             m="s"
-            leftSection={<IconAlt size={24} color="#b2c0c6" />}
-            rightSection={<IconRefresh size={24} color="#002C42" />}
+            leftSection={
+              <IconAlt
+                size={24}
+                color={theme.other?.colors?.amp_ocean.amp_ocean_30}
+              />
+            }
+            rightSection={
+              <IconRefresh
+                size={24}
+                color={theme.other?.colors?.amp_ocean.amp_ocean_100}
+              />
+            }
             onClick={handleRefetch}
           >
             Refresh
@@ -169,7 +180,13 @@ export function LocalizedAltTextInput({
           mb="sm"
           style={{ marginLeft: 0 }}
           leftSectionPointerEvents="none"
-          leftSection={<IconAlt size={20} stroke={1.5} color="#b2c0c6" />}
+          leftSection={
+            <IconAlt
+              size={20}
+              stroke={1.5}
+              color={theme.other?.colors?.amp_ocean.amp_ocean_30}
+            />
+          }
           rightSection={
             <>
               {altText?.locales[locale] && (
