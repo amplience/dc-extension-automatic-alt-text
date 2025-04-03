@@ -95,7 +95,7 @@ export function useExtension(): UseExtensionContext {
       setValue(value);
       dcExtensionsSdk?.field.setValue(value);
     },
-    [dcExtensionsSdk?.field]
+    [dcExtensionsSdk?.field],
   );
 
   useEffect(() => {
@@ -131,7 +131,7 @@ export function useExtension(): UseExtensionContext {
       .finally(() => {
         setReady(true);
       });
-  }, []);
+  }, [setFieldValue]);
 
   return {
     readOnly,
