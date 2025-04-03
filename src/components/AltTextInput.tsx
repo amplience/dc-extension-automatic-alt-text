@@ -60,7 +60,7 @@ export function AltTextInput({
     const checkOverflow = () => {
       if (contentRef.current) {
         setCanExpand(
-          contentRef.current.scrollHeight > contentRef.current.clientHeight
+          contentRef.current.scrollHeight > contentRef.current.clientHeight,
         );
       }
     };
