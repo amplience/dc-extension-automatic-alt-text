@@ -91,8 +91,6 @@ export function AltTextInput({
         value={String(value || "")}
         onChange={onChange}
         readOnly={readOnly}
-        pl="30px"
-        pr="35px"
         leftSectionPointerEvents="none"
         leftSection={
           <IconAlt
