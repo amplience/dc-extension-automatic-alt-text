@@ -29,7 +29,7 @@ export default class ContentHubService {
   constructor(
     private readonly sdk: ContentFieldExtension,
     private readonly hubId: string,
-    options?: { basepath: string }
+    options?: { basepath: string },
   ) {
     this.basepath =
       options?.basepath || "https://api.amplience.net/v2/content/media-library";
@@ -76,7 +76,7 @@ export default class ContentHubService {
       };
     } catch (e) {
       console.error(
-        `Failure during getAssetAltTextById: ${(e as Error).message}`
+        `Failure during getAssetAltTextById: ${(e as Error).message}`,
       );
       throw e;
     }
