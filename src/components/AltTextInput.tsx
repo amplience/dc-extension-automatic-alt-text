@@ -7,10 +7,12 @@ import { useEffect, useRef, useState } from "react";
 import { useAutoCaption } from "../hooks/useAutoCaption";
 import { useDisclosure } from "@mantine/hooks";
 import { theme } from "@amplience/ui-styles";
+import { FieldSchema } from "dc-extensions-sdk/dist/types/lib/components/Field";
+import { ExtensionParms } from "../hooks/useExtension";
 
 interface AltTextInputProps {
   value: string;
-  schema: Record<string, unknown>;
+  schema: FieldSchema<ExtensionParms>;
   readOnly: boolean;
   onChange: (value: string) => void;
 }
