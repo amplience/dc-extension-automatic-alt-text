@@ -1,0 +1,17 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - echo "" >> .npmrc # new line
+        - echo "//npm.pkg.github.com/:_authToken=${GITHUB_PAT}" >> .npmrc
+        - nvm install
+        - nvm use
+        - npm ci
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: dist
+    files:
+      - "**/*"

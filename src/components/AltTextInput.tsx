@@ -55,10 +55,21 @@ export function AltTextInput({
       {altText?.locales && Object.values(altText?.locales).length > 1 && (
         <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
           {loading && <Loader color="blue" />}
-          <Tooltip label="Fetch ALT Text from Content Hub" position="top" offset={5}  >
-          <Button variant="ghost" p="s" m="s" leftSection={<IconAlt size={24} color="#b2c0c6" />} rightSection={<IconRefresh size={24} color="#002C42" />} onClick={handleRefetch}>
-            Refresh
-          </Button>
+          <Tooltip
+            label="Fetch ALT Text from Content Hub"
+            position="top"
+            offset={5}
+          >
+            <Button
+              variant="ghost"
+              p="s"
+              m="s"
+              leftSection={<IconAlt size={24} color="#b2c0c6" />}
+              rightSection={<IconRefresh size={24} color="#002C42" />}
+              onClick={handleRefetch}
+            >
+              Refresh
+            </Button>
           </Tooltip>
         </Flex>
       )}
@@ -70,7 +81,7 @@ export function AltTextInput({
         onChange={onChange}
         readOnly={readOnly}
         leftSectionPointerEvents="none"
-        leftSection={<IconAlt size={20} stroke={1.5} color='#b2c0c6' />}
+        leftSection={<IconAlt size={20} stroke={1.5} color="#b2c0c6" />}
       />
       <Flex justify="flex-start" gap="sm" mt="sm" mb="sm" wrap="wrap">
         {altText?.locales &&

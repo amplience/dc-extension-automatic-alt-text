@@ -21,7 +21,7 @@ export function useImageRef() {
     const image = RelativeJSONPointer.evaluate(
       imagePointer,
       formValue,
-      fieldPath
+      fieldPath,
     );
 
     const isImage = image?._meta.schema === IMAGE_LINK_SCHEMA;

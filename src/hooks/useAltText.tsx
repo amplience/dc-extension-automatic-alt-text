@@ -18,7 +18,7 @@ export function useAltText() {
     }
 
     setAltText(
-      await contentHubService?.getAssetAltTextById(imageRef?.id || "")
+      await contentHubService?.getAssetAltTextById(imageRef?.id || ""),
     );
   }, [contentHubService, imageRef, ready]);
 

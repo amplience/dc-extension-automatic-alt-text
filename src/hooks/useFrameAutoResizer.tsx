@@ -5,7 +5,7 @@ import {
 import { useEffect } from "react";
 
 export function useFrameAutoResizer(
-  sdk: ContentEditorExtension | ContentFieldExtension | null
+  sdk: ContentEditorExtension | ContentFieldExtension | null,
 ) {
   useEffect(() => {
     const isContentFormExtension = sdk instanceof ContentEditorExtension;
