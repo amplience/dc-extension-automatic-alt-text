@@ -92,9 +92,7 @@ export function AltTextInput({
   return (
     <>
       {Boolean(availableLocales.length) && (
-        <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
-          {loading && <Loader color="blue" />}
-        </Flex>
+        <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap"></Flex>
       )}
 
       <TextInput
@@ -124,7 +122,11 @@ export function AltTextInput({
                 offset={5}
               >
                 <IconButton variant="subtle" onClick={() => handleRefetch()}>
-                  <IconWorldShare size={20} stroke={2} />
+                  {loading ? (
+                    <Loader size="xs" color="blue" />
+                  ) : (
+                    <IconWorldShare size={20} stroke={2} />
+                  )}
                 </IconButton>
               </Tooltip>
             )}

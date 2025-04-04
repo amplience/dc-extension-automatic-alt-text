@@ -137,8 +137,15 @@ export function LocalizedAltTextInput({
 
   return (
     <>
-      <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
-        {loading && <Loader color="blue" />}
+      <Flex
+        justify="flex-end"
+        gap="sm"
+        mt="sm"
+        mb="sm"
+        wrap="wrap"
+        align="center"
+      >
+        {loading && <Loader size="xs" color="blue" />}
         <Tooltip
           label="Fetch ALT Text from Content Hub for all available locales"
           position="top"
