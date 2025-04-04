@@ -168,6 +168,7 @@ export function LocalizedAltTextInput({
               />
             }
             onClick={handleRefetch}
+            disabled={loading}
           >
             Refresh
           </Button>
@@ -209,6 +210,7 @@ export function LocalizedAltTextInput({
                   <IconButton
                     variant="subtle"
                     onClick={() => handleClick(locale)}
+                    disabled={loading}
                   >
                     <IconWorldShare size={20} stroke={2} />
                   </IconButton>

@@ -121,7 +121,11 @@ export function AltTextInput({
                 position="top"
                 offset={5}
               >
-                <IconButton variant="subtle" onClick={() => handleRefetch()}>
+                <IconButton
+                  variant="subtle"
+                  onClick={() => handleRefetch()}
+                  disabled={loading}
+                >
                   {loading ? (
                     <Loader size="xs" color="blue" />
                   ) : (
