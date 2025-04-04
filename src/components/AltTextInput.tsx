@@ -65,7 +65,7 @@ export function AltTextInput({
     return (
       <Button
         variant="tertiary"
-        size="xs"
+        size="sm"
         key={locale}
         onClick={() => handleClick(locale)}
       >
