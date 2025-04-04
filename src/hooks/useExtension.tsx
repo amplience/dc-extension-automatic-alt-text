@@ -2,6 +2,7 @@ import { init, ContentFieldExtension, LocalModel } from "dc-extensions-sdk";
 import { useCallback, useEffect, useState } from "react";
 import { useFrameAutoResizer } from "./useFrameAutoResizer";
 import ContentHubService from "../services/ContentHubService";
+import { FieldSchema } from "dc-extensions-sdk/dist/types/lib/components/Field";
 
 const DEFAULT_LOCALES = [
   {
@@ -55,7 +56,7 @@ export enum FIELD_TYPE {
 export interface UseExtensionContext {
   readOnly: boolean;
   ready: boolean;
-  schema: Record<string, unknown>;
+  schema: FieldSchema<ExtensionParms> | null | undefined;
   locales: LocalModel[];
   options: ExtensionOptions;
   fieldPath: string;
@@ -73,7 +74,7 @@ export interface UseExtensionContext {
 export function useExtension(): UseExtensionContext {
   const [dcExtensionsSdk, setDcExtensionsSdk] =
     useState<ContentFieldExtension | null>(null);
-  const [schema, setSchema] = useState<Record<string, unknown>>({});
+  const [schema, setSchema] = useState<FieldSchema<ExtensionParms>>();
   const [ready, setReady] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
   const [locales, setLocales] = useState<LocalModel[]>(DEFAULT_LOCALES);

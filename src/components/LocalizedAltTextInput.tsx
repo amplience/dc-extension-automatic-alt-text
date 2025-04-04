@@ -1,11 +1,12 @@
 import {
   Button,
+  CollapsibleContainer,
   IconButton,
   LocaleBadge,
   TextInput,
   Tooltip,
 } from "@amplience/ui-core";
-import { LocalizedString } from "../hooks/useExtension";
+import { ExtensionParms, LocalizedString } from "../hooks/useExtension";
 import { IconAlt, IconRefresh, IconWorldShare } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { LocalModel } from "dc-extensions-sdk";
@@ -14,12 +15,14 @@ import { Flex, Loader } from "@mantine/core";
 import { AltText, useAltText } from "../hooks/useAltText";
 import { useAutoCaption } from "../hooks/useAutoCaption";
 import { theme } from "@amplience/ui-styles";
+import { useUiParams } from "../hooks/useUiParams";
+import { FieldSchema } from "dc-extensions-sdk/dist/types/lib/components/Field";
 
 type LocalizedValue = Record<string, string>;
 
 interface LocalizedAltTextInputProps {
   value: LocalizedString;
-  schema: Record<string, unknown>;
+  schema: FieldSchema<ExtensionParms>;
   readOnly: boolean;
   locales: LocalModel[];
   onChange: (value: LocalizedString) => void;
@@ -80,6 +83,7 @@ export function LocalizedAltTextInput({
   locales,
   onChange,
 }: LocalizedAltTextInputProps) {
+  const { withHeader, collapsed } = useUiParams();
   const { altText, fetchAltText } = useAltText();
   const { autoCaptionEnabled } = useAutoCaption();
 
@@ -87,6 +91,7 @@ export function LocalizedAltTextInput({
   const [localizedValue, setLocalizedValue] = useState<LocalizedValue>(
     initialValues(locales, value),
   );
+  const [open, setOpen] = useState<boolean>(!collapsed);
 
   const [preventAutoCaption, setPreventAutoCaption] = useState(false);
 
@@ -135,82 +140,92 @@ export function LocalizedAltTextInput({
     }
   }, [altText, autoCaptionEnabled, locales, onChange, preventAutoCaption]);
 
+  useEffect(() => {
+    setOpen(!collapsed);
+  }, [collapsed]);
+
   return (
     <>
-      <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
-        {loading && <Loader color="blue" />}
-        <Tooltip
-          label="Fetch ALT Text from Content Hub for all available locales"
-          position="top"
-          offset={5}
-        >
-          <Button
-            variant="ghost"
-            p="s"
-            m="s"
+      <CollapsibleContainer
+        open={open}
+        title={withHeader && schema.title}
+        description={withHeader && schema.description}
+        setOpen={setOpen}
+      >
+        <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
+          {loading && <Loader color="blue" />}
+          <Tooltip
+            label="Fetch ALT Text from Content Hub for all available locales"
+            position="top"
+            offset={5}
+          >
+            <Button
+              variant="ghost"
+              p="s"
+              m="s"
+              leftSection={
+                <IconAlt
+                  size={24}
+                  color={theme.other?.colors?.amp_ocean.amp_ocean_30}
+                />
+              }
+              rightSection={
+                <IconRefresh
+                  size={24}
+                  color={theme.other?.colors?.amp_ocean.amp_ocean_100}
+                />
+              }
+              onClick={handleRefetch}
+            >
+              Refresh
+            </Button>
+          </Tooltip>
+        </Flex>
+
+        {Object.entries(localizedValue || {}).map(([locale, localeValue]) => (
+          <TextInput
+            key={locale}
+            title={schema.title}
+            fieldSchema={schema}
+            value={localeValue}
+            onChange={(value: string) => handleChange(locale, value)}
+            readOnly={readOnly}
+            titleRightSection={<LocaleBadge locale={locale} />}
+            mt="sm"
+            mb="sm"
+            ml="0"
+            classNames={{
+              input: "alt-text-input-class",
+            }}
+            leftSectionPointerEvents="none"
             leftSection={
               <IconAlt
-                size={24}
+                size={20}
+                stroke={1.5}
                 color={theme.other?.colors?.amp_ocean.amp_ocean_30}
               />
             }
             rightSection={
-              <IconRefresh
-                size={24}
-                color={theme.other?.colors?.amp_ocean.amp_ocean_100}
-              />
-            }
-            onClick={handleRefetch}
-          >
-            Refresh
-          </Button>
-        </Tooltip>
-      </Flex>
-
-      {Object.entries(localizedValue || {}).map(([locale, localeValue]) => (
-        <TextInput
-          key={locale}
-          title={schema.title}
-          description={schema.description}
-          fieldSchema={schema}
-          value={localeValue}
-          onChange={(value: string) => handleChange(locale, value)}
-          readOnly={readOnly}
-          titleRightSection={<LocaleBadge locale={locale} />}
-          mt="sm"
-          mb="sm"
-          ml="0"
-          classNames={{
-            input: "alt-text-input-class",
-          }}
-          leftSectionPointerEvents="none"
-          leftSection={
-            <IconAlt
-              size={20}
-              stroke={1.5}
-              color={theme.other?.colors?.amp_ocean.amp_ocean_30}
-            />
-          }
-          rightSection={
-            <>
-              {altText?.locales[locale] && (
-                <Tooltip
-                  label="Refresh with the latest ALT text for this locale"
-                  position="top"
-                  offset={5}
-                >
-                  <IconButton
-                    variant="subtle"
-                    onClick={() => handleClick(locale)}
+              <>
+                {altText?.locales[locale] && (
+                  <Tooltip
+                    label="Refresh with the latest ALT text for this locale"
+                    position="top"
+                    offset={5}
                   >
-                    <IconWorldShare size={20} stroke={2} />
-                  </IconButton>
-                </Tooltip>
-              )}
-            </>
-          }
-        />
-      ))}
+                    <IconButton
+                      variant="subtle"
+                      onClick={() => handleClick(locale)}
+                    >
+                      <IconWorldShare size={20} stroke={2} />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </>
+            }
+          />
+        ))}
+      </CollapsibleContainer>
     </>
   );
 }
