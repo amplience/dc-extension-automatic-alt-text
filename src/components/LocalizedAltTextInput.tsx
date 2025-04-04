@@ -1,9 +1,11 @@
+import "./LocalizedAltTextInput.css";
 import {
   Button,
   IconButton,
   LocaleBadge,
   TextInput,
   Tooltip,
+  ComponentSpacer,
 } from "@amplience/ui-core";
 import { LocalizedString } from "../hooks/useExtension";
 import { IconAlt, IconRefresh, IconWorldShare } from "@tabler/icons-react";
@@ -137,14 +139,7 @@ export function LocalizedAltTextInput({
 
   return (
     <>
-      <Flex
-        justify="flex-end"
-        gap="sm"
-        mt="sm"
-        mb="sm"
-        wrap="wrap"
-        align="center"
-      >
+      <Flex justify="flex-end" gap="sm" mt="sm" wrap="wrap" align="center">
         {loading && <Loader size="xs" color="blue" />}
         <Tooltip
           label="Fetch ALT Text from Content Hub for all available locales"
@@ -175,51 +170,56 @@ export function LocalizedAltTextInput({
         </Tooltip>
       </Flex>
 
-      {Object.entries(localizedValue || {}).map(([locale, localeValue]) => (
-        <TextInput
-          key={locale}
-          title={schema.title}
-          description={schema.description}
-          fieldSchema={schema}
-          value={localeValue}
-          onChange={(value: string) => handleChange(locale, value)}
-          readOnly={readOnly}
-          titleRightSection={<LocaleBadge locale={locale} />}
-          mt="sm"
-          mb="sm"
-          ml="0"
-          classNames={{
-            input: "alt-text-input-class",
-          }}
-          leftSectionPointerEvents="none"
-          leftSection={
-            <IconAlt
-              size={20}
-              stroke={1.5}
-              color={theme.other?.colors?.amp_ocean.amp_ocean_30}
-            />
-          }
-          rightSection={
-            <>
-              {altText?.locales[locale] && (
-                <Tooltip
-                  label="Refresh with the latest ALT text for this locale"
-                  position="top"
-                  offset={5}
-                >
-                  <IconButton
-                    variant="subtle"
-                    onClick={() => handleClick(locale)}
-                    disabled={loading}
-                  >
-                    <IconWorldShare size={20} stroke={2} />
-                  </IconButton>
-                </Tooltip>
-              )}
-            </>
-          }
-        />
-      ))}
+      <div className="alt-text-inputs">
+        {Object.entries(localizedValue || {}).map(
+          ([locale, localeValue], i) => (
+            <ComponentSpacer bottom="spacing_02">
+              <TextInput
+                key={locale}
+                title={schema.title}
+                description={schema.description}
+                fieldSchema={schema}
+                value={localeValue}
+                onChange={(value: string) => handleChange(locale, value)}
+                readOnly={readOnly}
+                titleRightSection={<LocaleBadge locale={locale} />}
+                mt={`${i === 0 ? "" : "sm"}`}
+                ml="0"
+                classNames={{
+                  input: "alt-text-input-class",
+                }}
+                leftSectionPointerEvents="none"
+                leftSection={
+                  <IconAlt
+                    size={20}
+                    stroke={1.5}
+                    color={theme.other?.colors?.amp_ocean.amp_ocean_30}
+                  />
+                }
+                rightSection={
+                  <>
+                    {altText?.locales[locale] && (
+                      <Tooltip
+                        label="Refresh with the latest ALT text for this locale"
+                        position="top"
+                        offset={5}
+                      >
+                        <IconButton
+                          variant="subtle"
+                          onClick={() => handleClick(locale)}
+                          disabled={loading}
+                        >
+                          <IconWorldShare size={20} stroke={2} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </>
+                }
+              />
+            </ComponentSpacer>
+          ),
+        )}
+      </div>
     </>
   );
 }
