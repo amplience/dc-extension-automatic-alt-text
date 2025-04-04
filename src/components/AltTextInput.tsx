@@ -7,10 +7,12 @@ import { useEffect, useRef, useState } from "react";
 import { useAutoCaption } from "../hooks/useAutoCaption";
 import { useDisclosure } from "@mantine/hooks";
 import { theme } from "@amplience/ui-styles";
+import { FieldSchema } from "dc-extensions-sdk/dist/types/lib/components/Field";
+import { ExtensionParms } from "../hooks/useExtension";
 
 interface AltTextInputProps {
   value: string;
-  schema: Record<string, unknown>;
+  schema: FieldSchema<ExtensionParms>;
   readOnly: boolean;
   onChange: (value: string) => void;
 }
@@ -127,7 +129,10 @@ export function AltTextInput({
                   disabled={loading}
                 >
                   {loading ? (
-                    <Loader size="xs" color="blue" />
+                    <Loader
+                      size="xs"
+                      color={theme.other?.colors?.amp_ocean.amp_ocean_30}
+                    />
                   ) : (
                     <IconWorldShare size={20} stroke={2} />
                   )}
