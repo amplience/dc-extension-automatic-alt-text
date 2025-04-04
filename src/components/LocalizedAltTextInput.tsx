@@ -1,12 +1,19 @@
-import { Button, IconButton, LocaleBadge, TextInput } from "@amplience/ui-core";
+import {
+  Button,
+  IconButton,
+  LocaleBadge,
+  TextInput,
+  Tooltip,
+} from "@amplience/ui-core";
 import { LocalizedString } from "../hooks/useExtension";
-import { IconAlt } from "@tabler/icons-react";
+import { IconAlt, IconRefresh, IconWorldShare } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { LocalModel } from "dc-extensions-sdk";
 import { Flex, Loader } from "@mantine/core";
 
 import { AltText, useAltText } from "../hooks/useAltText";
 import { useAutoCaption } from "../hooks/useAutoCaption";
+import { theme } from "@amplience/ui-styles";
 
 type LocalizedValue = Record<string, string>;
 
@@ -130,24 +137,41 @@ export function LocalizedAltTextInput({
 
   return (
     <>
-      {altText?.locales && Object.values(altText?.locales).length >= 1 && (
-        <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
-          {loading && <Loader color="blue" />}
+      <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
+        {loading && <Loader color="blue" />}
+        <Tooltip
+          label="Fetch ALT Text from Content Hub for all available locales"
+          position="top"
+          offset={5}
+        >
           <Button
-            variant="secondary"
+            variant="ghost"
             p="s"
             m="s"
-            rightSection={<IconAlt size={24} />}
+            leftSection={
+              <IconAlt
+                size={24}
+                color={theme.other?.colors?.amp_ocean.amp_ocean_30}
+              />
+            }
+            rightSection={
+              <IconRefresh
+                size={24}
+                color={theme.other?.colors?.amp_ocean.amp_ocean_100}
+              />
+            }
             onClick={handleRefetch}
           >
             Refresh
           </Button>
-        </Flex>
-      )}
+        </Tooltip>
+      </Flex>
+
       {Object.entries(localizedValue || {}).map(([locale, localeValue]) => (
         <TextInput
           key={locale}
           title={schema.title}
+          description={schema.description}
           fieldSchema={schema}
           value={localeValue}
           onChange={(value: string) => handleChange(locale, value)}
@@ -155,12 +179,33 @@ export function LocalizedAltTextInput({
           titleRightSection={<LocaleBadge locale={locale} />}
           mt="sm"
           mb="sm"
+          ml="0"
+          classNames={{
+            input: "alt-text-input-class",
+          }}
+          leftSectionPointerEvents="none"
+          leftSection={
+            <IconAlt
+              size={20}
+              stroke={1.5}
+              color={theme.other?.colors?.amp_ocean.amp_ocean_30}
+            />
+          }
           rightSection={
             <>
               {altText?.locales[locale] && (
-                <IconButton onClick={() => handleClick(locale)}>
-                  <IconAlt size={18} stroke={1.5} />
-                </IconButton>
+                <Tooltip
+                  label="Refresh with the latest ALT text for this locale"
+                  position="top"
+                  offset={5}
+                >
+                  <IconButton
+                    variant="subtle"
+                    onClick={() => handleClick(locale)}
+                  >
+                    <IconWorldShare size={20} stroke={2} />
+                  </IconButton>
+                </Tooltip>
               )}
             </>
           }
