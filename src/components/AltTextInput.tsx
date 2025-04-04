@@ -1,9 +1,12 @@
-import { Button, TextInput } from "@amplience/ui-core";
-import { Flex, Loader } from "@mantine/core";
-import { IconAlt } from "@tabler/icons-react";
+import { IconButton, TextInput, Tooltip } from "@amplience/ui-core";
+import { Flex, Loader, Group, Button } from "@mantine/core";
+import { Button as AmplienceButton } from "@amplience/ui-core";
+import { IconAlt, IconWorldShare } from "@tabler/icons-react";
 import { useAltText } from "../hooks/useAltText";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAutoCaption } from "../hooks/useAutoCaption";
+import { useDisclosure } from "@mantine/hooks";
+import { theme } from "@amplience/ui-styles";
 
 interface AltTextInputProps {
   value: string;
@@ -23,6 +26,10 @@ export function AltTextInput({
 
   const [loading, setLoading] = useState(false);
   const [preventAutoCaption, setPreventAutoCaption] = useState(false);
+  const [opened, { toggle }] = useDisclosure(false);
+  const [canExpand, setCanExpand] = useState(false);
+
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const handleClick = (locale: string) => {
     const localisedAltText = altText?.locales[locale];
@@ -50,44 +57,103 @@ export function AltTextInput({
     }
   }, [altText, autoCaptionEnabled, onChange, preventAutoCaption]);
 
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (contentRef.current) {
+        setCanExpand(
+          contentRef.current.scrollHeight > contentRef.current.clientHeight,
+        );
+      }
+    };
+
+    checkOverflow();
+
+    window.addEventListener("resize", checkOverflow);
+    return () => window.removeEventListener("resize", checkOverflow);
+  }, []);
+
+  const localeButton = (locale: string) => {
+    return (
+      <Button
+        variant="default"
+        size="xs"
+        radius="lg"
+        miw="80px"
+        key={locale}
+        onClick={() => handleClick(locale)}
+      >
+        {locale}
+      </Button>
+    );
+  };
+
+  const availableLocales = Object.keys(altText?.locales || {});
+
   return (
     <>
-      {altText?.locales && Object.values(altText?.locales).length > 1 && (
+      {Boolean(availableLocales.length) && (
         <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
           {loading && <Loader color="blue" />}
-          <Button
-            variant="secondary"
-            p="s"
-            m="s"
-            rightSection={<IconAlt size={24} />}
-            onClick={handleRefetch}
-          >
-            Refresh
-          </Button>
         </Flex>
       )}
 
       <TextInput
         label={schema.title}
+        description={schema.description}
         fieldSchema={schema}
         value={String(value || "")}
         onChange={onChange}
         readOnly={readOnly}
+        classNames={{
+          input: "alt-text-input-class",
+        }}
+        leftSectionPointerEvents="none"
+        leftSection={
+          <IconAlt
+            size={20}
+            stroke={1.5}
+            color={theme.other?.colors?.amp_ocean.amp_ocean_30}
+          />
+        }
+        rightSection={
+          <>
+            {altText?.locales && (
+              <Tooltip
+                label="Refresh with the latest ALT text for this locale"
+                position="top"
+                offset={5}
+              >
+                <IconButton variant="subtle" onClick={() => handleRefetch()}>
+                  <IconWorldShare size={20} stroke={2} />
+                </IconButton>
+              </Tooltip>
+            )}
+          </>
+        }
       />
-      <Flex justify="flex-start" gap="sm" mt="sm" mb="sm" wrap="wrap">
-        {altText?.locales &&
-          Object.keys(altText.locales).map((locale) => (
-            <Button
-              variant="outline"
-              p="s"
-              m="s"
-              key={locale}
-              onClick={() => handleClick(locale)}
-            >
-              {locale}
-            </Button>
-          ))}
-      </Flex>
+
+      {Boolean(availableLocales.length) && (
+        <Flex
+          direction="row"
+          justify="flex-start"
+          gap="sm"
+          mt="sm"
+          mb="sm"
+          wrap="wrap"
+          style={{ overflow: "hidden", maxHeight: opened ? "unset" : "32px" }}
+          ref={contentRef}
+        >
+          {availableLocales.map(localeButton)}
+        </Flex>
+      )}
+
+      {(canExpand || opened) && (
+        <Group justify="right" mt="sm" mb="sm">
+          <AmplienceButton variant="ghost" onClick={toggle}>
+            Show {opened ? "less" : "more"}
+          </AmplienceButton>
+        </Group>
+      )}
     </>
   );
 }

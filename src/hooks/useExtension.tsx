@@ -111,6 +111,7 @@ export function useExtension(): UseExtensionContext {
         setFieldValue(fieldValue);
         setSchema(sdk.field.schema);
         setOptions({ collapseByDefault: sdk.collapseByDefault });
+        setReadOnly(sdk.form.readOnly);
         setLocales(sdk.locales.available);
         setImagePointer(params.image);
         setAutoCaption(params.autoCaption);
