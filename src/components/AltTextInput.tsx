@@ -1,6 +1,6 @@
 import { IconButton, TextInput, Tooltip } from "@amplience/ui-core";
-import { Flex, Loader, Group, Button } from "@mantine/core";
-import { Button as AmplienceButton } from "@amplience/ui-core";
+import { Flex, Loader, Group } from "@mantine/core";
+import { Button } from "@amplience/ui-core";
 import { IconAlt, IconWorldShare } from "@tabler/icons-react";
 import { useAltText } from "../hooks/useAltText";
 import { useEffect, useRef, useState } from "react";
@@ -9,6 +9,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { theme } from "@amplience/ui-styles";
 import { FieldSchema } from "dc-extensions-sdk/dist/types/lib/components/Field";
 import { ExtensionParms } from "../hooks/useExtension";
+import { useOverflow } from "../hooks/useOverflow";
 
 interface AltTextInputProps {
   value: string;
@@ -29,9 +30,9 @@ export function AltTextInput({
   const [loading, setLoading] = useState(false);
   const [preventAutoCaption, setPreventAutoCaption] = useState(false);
   const [opened, { toggle }] = useDisclosure(false);
-  const [canExpand, setCanExpand] = useState(false);
-
   const contentRef = useRef<HTMLDivElement>(null);
+
+  const { isOverflowing } = useOverflow(contentRef);
 
   const handleClick = (locale: string) => {
     const localisedAltText = altText?.locales[locale];
@@ -45,6 +46,7 @@ export function AltTextInput({
     setLoading(true);
     setPreventAutoCaption(true);
     await fetchAltText();
+    handleClick("default");
     setLoading(false);
     setPreventAutoCaption(false);
   };
@@ -59,28 +61,11 @@ export function AltTextInput({
     }
   }, [altText, autoCaptionEnabled, onChange, preventAutoCaption]);
 
-  useEffect(() => {
-    const checkOverflow = () => {
-      if (contentRef.current) {
-        setCanExpand(
-          contentRef.current.scrollHeight > contentRef.current.clientHeight,
-        );
-      }
-    };
-
-    checkOverflow();
-
-    window.addEventListener("resize", checkOverflow);
-    return () => window.removeEventListener("resize", checkOverflow);
-  }, []);
-
   const localeButton = (locale: string) => {
     return (
       <Button
-        variant="default"
+        variant="tertiary"
         size="xs"
-        radius="lg"
-        miw="80px"
         key={locale}
         onClick={() => handleClick(locale)}
       >
@@ -93,10 +78,6 @@ export function AltTextInput({
 
   return (
     <>
-      {Boolean(availableLocales.length) && (
-        <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap"></Flex>
-      )}
-
       <TextInput
         label={schema.title}
         description={schema.description}
@@ -151,18 +132,22 @@ export function AltTextInput({
           mt="sm"
           mb="sm"
           wrap="wrap"
-          style={{ overflow: "hidden", maxHeight: opened ? "unset" : "32px" }}
+          style={{
+            overflow: "hidden",
+            maxHeight: opened ? "unset" : "34px",
+            minHeight: "34px",
+          }}
           ref={contentRef}
         >
           {availableLocales.map(localeButton)}
         </Flex>
       )}
 
-      {(canExpand || opened) && (
+      {(isOverflowing || opened) && (
         <Group justify="right" mt="sm" mb="sm">
-          <AmplienceButton variant="ghost" onClick={toggle}>
+          <Button variant="ghost" size="xs" onClick={toggle}>
             Show {opened ? "less" : "more"}
-          </AmplienceButton>
+          </Button>
         </Group>
       )}
     </>
