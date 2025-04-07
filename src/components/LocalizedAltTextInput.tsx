@@ -159,8 +159,20 @@ export function LocalizedAltTextInput({
         description={withHeader && schema.description}
         setOpen={setOpen}
       >
-        <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
-          {loading && <Loader color="blue" />}
+        <Flex
+          justify="flex-end"
+          gap="sm"
+          mt="sm"
+          mb="sm"
+          wrap="wrap"
+          align="center"
+        >
+          {loading && (
+            <Loader
+              size="xs"
+              color={theme.other?.colors?.amp_ocean.amp_ocean_30}
+            />
+          )}
           <Tooltip
             label="Fetch ALT Text from Content Hub for all available locales"
             position="top"
@@ -183,6 +195,7 @@ export function LocalizedAltTextInput({
                 />
               }
               onClick={handleRefetch}
+              disabled={loading}
             >
               Refresh
             </Button>
@@ -223,6 +236,7 @@ export function LocalizedAltTextInput({
                     <IconButton
                       variant="subtle"
                       onClick={() => handleClick(locale)}
+                      disabled={loading}
                     >
                       <IconWorldShare size={20} stroke={2} />
                     </IconButton>

@@ -94,9 +94,7 @@ export function AltTextInput({
   return (
     <>
       {Boolean(availableLocales.length) && (
-        <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap">
-          {loading && <Loader color="blue" />}
-        </Flex>
+        <Flex justify="flex-end" gap="sm" mt="sm" mb="sm" wrap="wrap"></Flex>
       )}
 
       <TextInput
@@ -125,8 +123,19 @@ export function AltTextInput({
                 position="top"
                 offset={5}
               >
-                <IconButton variant="subtle" onClick={() => handleRefetch()}>
-                  <IconWorldShare size={20} stroke={2} />
+                <IconButton
+                  variant="subtle"
+                  onClick={() => handleRefetch()}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <Loader
+                      size="xs"
+                      color={theme.other?.colors?.amp_ocean.amp_ocean_30}
+                    />
+                  ) : (
+                    <IconWorldShare size={20} stroke={2} />
+                  )}
                 </IconButton>
               </Tooltip>
             )}
