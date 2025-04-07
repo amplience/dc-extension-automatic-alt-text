@@ -50,9 +50,13 @@ Only options with alt text available will be displayed. The order of the locales
 
 ![Locale buttons](media/locale-chips.png)
 
-If more locales are available than fit into one line, an option to show more is displayed to see all locales:
+If more locales are available than fit into one line, an option to "Show more" is displayed to see all locales and select from:
 
-![Locale buttons expand](media/locale-chips-expand.png)
+![Locale buttons show more](media/locale-chips-show-more.png)
+
+To collapse the view, simply click the "Show Less" button:
+
+![Locale buttons show less](media/locale-chips-show-less.png)
 
 ### Localised text field
 
