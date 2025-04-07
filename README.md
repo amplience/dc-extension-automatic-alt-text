@@ -282,6 +282,58 @@ If the extension is used for a localised text field with field level localisatio
 }
 ```
 
+### Example snippets
+
+Extensions can have [snippets](https://amplience.com/developers/docs/integrations/extensions/register-use/#adding-snippets-for-content-field-extensions) which make them easier to add and selectable in the Amplience Schema Editor.
+
+Below are two example snippets for standard and localised text fields:
+
+> Note: the `image` property should match a path to your image.
+
+#### Standard alt text snippet
+
+Title: `Auto Alt text (Standard)`
+Description: `Snippet for the automatic alt text extension for a standard text field`
+Snippet:
+
+```json
+{
+  "type": "string",
+  "title": "Image alt text",
+  "description": "Alt text for the selected image",
+  "ui:extension": {
+    "name": "automatic-alt-text",
+    "params": {
+      "image": "{{PATH_TO_IMAGE_HERE}}"
+    }
+  }
+}
+```
+
+#### Localised alt text snippet
+
+Title: `Auto Alt text (localised)`
+Description: `Snippet for the automatic alt text extension for a localised text field`
+Snippet:
+
+```json
+{
+  "title": "Image alt text",
+  "description": "Alt text for the selected image",
+  "allOf": [
+    {
+      "$ref": "http://bigcontent.io/cms/schema/v1/localization#/definitions/localized-string"
+    }
+  ],
+  "ui:extension": {
+    "name": "automatic-alt-text",
+    "params": {
+      "image": "{{PATH_TO_IMAGE_HERE}}"
+    }
+  }
+}
+```
+
 ### Disabling Auto caption
 
 The extension will automatically fetch generated alt text from the image asset when the image property is populated instead of requiring the user to manually press the generate button.
