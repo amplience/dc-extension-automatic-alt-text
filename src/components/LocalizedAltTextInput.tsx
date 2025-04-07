@@ -213,7 +213,7 @@ export function LocalizedAltTextInput({
               onClick={handleClearAll}
               disabled={loading}
             >
-              Clear All
+              Clear all
             </Button>
           </Tooltip>
         </Flex>
