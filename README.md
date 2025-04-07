@@ -6,8 +6,11 @@ Using this extension can help content creators by automating information require
 
 For developers, it ensures that the alt text is available in the content form and supports localisation in our delivery APIs to minimise requests needed on the web applications.
 
-// TODO: Replace screenshot with finalised UX
-![Automatic Alt Text Extension](media/hero-image.png)
+Screenshot of extenion on standard text field:
+![Automatic Alt Text Extension](media/hero-standard.png "Screen of standard text field")
+
+Screenshot of extension on localised text field:
+![Automatic Alt Text Extension - Localised](media/hero-localised.png "Screenshot of localised text field")
 
 ## Key features
 
