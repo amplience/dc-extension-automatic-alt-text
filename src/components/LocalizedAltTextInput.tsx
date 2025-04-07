@@ -177,6 +177,7 @@ export function LocalizedAltTextInput({
                 <InfoPopover
                   paragraphs={[
                     "Pulls in Alt text from Content Hub for all locales",
+                    "Docs: https://github.com/amplience/dc-extension-automatic-alt-text",
                   ]}
                 />
               </div>
