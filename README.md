@@ -36,7 +36,7 @@ See the [Limitations](#limitations) section for further guidance.
 
 ### Standard text field
 
-The text field behave as normal text field and can be edited as such.
+The text field behaves as a normal text field and can be edited as such.
 
 Clicking the Globe icon at the end of the text field (highlighted in red) will refresh the 'Default' alt text for that asset if available. This button will only show if alt text is available for this asset:
 
@@ -54,7 +54,7 @@ If more locales are available than fit into one line, an option to "Show more" i
 
 ![Locale buttons show more](media/locale-chips-show-more.png)
 
-To collapse the view, simply click the "Show Less" button:
+To collapse the view, simply click the "Show less" button:
 
 ![Locale buttons show less](media/locale-chips-show-less.png)
 
@@ -343,7 +343,7 @@ Alt text will automatically update in two instances:
 - a new image is added where none exists
 - an existing image is changed
 
-If you wish to disable auto caption, then turn use the following in your extension parameters:
+If you wish to disable auto caption, then use the following in your extension parameters:
 
 ```json
 {
@@ -357,7 +357,7 @@ If you wish to disable auto caption, then turn use the following in your extensi
 - When using a localised string for alt text, filtering locales in the form will not filter the localised text fields displayed in the content form.
 - When `autoCaption` is enabled, restoring the content item via the version history to a version that doesn't have alt text will send a graphql request that will populate the alt text field.
 - Images must be hosted / served by Amplience.
-- The Image object that you configure to point to MUST be a standard Amplience image object as per the [data type](https://amplience.com/developers/docs/schema-reference/data-types/#image) and associated image link.
+- The image object that you configure to point to MUST be a standard Amplience image object as per the [data type](https://amplience.com/developers/docs/schema-reference/data-types/#image) and associated image link.
 - The extension pulls in alt text from the Amplience Content Hub to be used in Dynamic Content. Any edits / changes are in Dynamic Content only and not saved back to Content Hub.
 - Locales in Dynamic Content must match the locales for [Automatic Alt Text](https://amplience.com/developers/docs/release-notes/2024/alt-text-generation/) in Content Hub for population.
 - Localised fields do not support min / max / pattern validation.
