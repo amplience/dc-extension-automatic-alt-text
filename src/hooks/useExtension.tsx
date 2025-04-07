@@ -108,6 +108,7 @@ export function useExtension(): UseExtensionContext {
           ...sdk.params.instance,
         };
         const fieldValue = await sdk.field.getValue();
+        const autoCaption = params.autoCaption === false ? false : true;
         setInitialValue(fieldValue);
         setFieldValue(fieldValue);
         setSchema(sdk.field.schema);
@@ -115,7 +116,7 @@ export function useExtension(): UseExtensionContext {
         setReadOnly(sdk.form.readOnly);
         setLocales(sdk.locales.available);
         setImagePointer(params.image);
-        setAutoCaption(params.autoCaption);
+        setAutoCaption(autoCaption);
         setFormValue(await sdk.form.getValue());
         setFieldPath(await sdk.field.getPath());
         setContentHubService(new ContentHubService(sdk, sdk.hub.id));

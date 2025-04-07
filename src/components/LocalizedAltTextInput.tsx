@@ -1,10 +1,12 @@
 import {
   Button,
   CollapsibleContainer,
+  Examples,
   IconButton,
   LocaleBadge,
   TextInput,
   Tooltip,
+  ComponentSpacer,
 } from "@amplience/ui-core";
 import { ExtensionParms, LocalizedString } from "../hooks/useExtension";
 import { IconAlt, IconRefresh, IconWorldShare } from "@tabler/icons-react";
@@ -135,6 +137,16 @@ export function LocalizedAltTextInput({
     setPreventAutoCaption(false);
   };
 
+  const handleClearAll = () => {
+    const cleared = Object.keys(localizedValue).reduce((acc, key) => {
+      acc[key] = "";
+      return acc;
+    }, {} as LocalizedValue);
+
+    setLocalizedValue(cleared);
+    onChange(transformToLocalizedString(cleared));
+  };
+
   useEffect(() => {
     if (preventAutoCaption) {
       return;
@@ -158,6 +170,20 @@ export function LocalizedAltTextInput({
         title={withHeader && schema.title}
         description={withHeader && schema.description}
         setOpen={setOpen}
+        titleRightSection={
+          <>
+            {open && (
+              <div onClick={(e) => e.stopPropagation()}>
+                <Examples
+                  examples={[
+                    "Pulls in Alt text from Content Hub for all locales",
+                  ]}
+                />
+              </div>
+            )}
+          </>
+        }
+        variant="filled"
       >
         <Flex
           justify="flex-end"
@@ -179,72 +205,79 @@ export function LocalizedAltTextInput({
             offset={5}
           >
             <Button
-              variant="ghost"
-              p="s"
-              m="s"
+              variant="secondary"
               leftSection={
-                <IconAlt
-                  size={24}
-                  color={theme.other?.colors?.amp_ocean.amp_ocean_30}
-                />
-              }
-              rightSection={
                 <IconRefresh
-                  size={24}
-                  color={theme.other?.colors?.amp_ocean.amp_ocean_100}
+                  size={14}
+                  color={theme.other?.colors?.primary.primary_100}
                 />
               }
               onClick={handleRefetch}
               disabled={loading}
             >
-              Refresh
+              Refresh alt texts
+            </Button>
+          </Tooltip>
+          <Tooltip label="Clear all Alt text" position="top" offset={5}>
+            <Button
+              variant="tertiary"
+              size="md"
+              p="s"
+              m="s"
+              onClick={handleClearAll}
+              disabled={loading}
+            >
+              Clear all
             </Button>
           </Tooltip>
         </Flex>
 
         {Object.entries(localizedValue || {}).map(([locale, localeValue]) => (
-          <TextInput
-            key={locale}
-            title={schema.title}
-            fieldSchema={schema}
-            value={localeValue}
-            onChange={(value: string) => handleChange(locale, value)}
-            readOnly={readOnly}
-            titleRightSection={<LocaleBadge locale={locale} />}
-            mt="sm"
-            mb="sm"
-            ml="0"
-            classNames={{
-              input: "alt-text-input-class",
-            }}
-            leftSectionPointerEvents="none"
-            leftSection={
-              <IconAlt
-                size={20}
-                stroke={1.5}
-                color={theme.other?.colors?.amp_ocean.amp_ocean_30}
-              />
-            }
-            rightSection={
-              <>
-                {altText?.locales[locale] && (
-                  <Tooltip
-                    label="Refresh with the latest ALT text for this locale"
-                    position="top"
-                    offset={5}
-                  >
-                    <IconButton
-                      variant="subtle"
-                      onClick={() => handleClick(locale)}
-                      disabled={loading}
+          <ComponentSpacer bottom="spacing_04">
+            <TextInput
+              key={locale}
+              title={schema.title}
+              description={schema.description}
+              fieldSchema={schema}
+              value={localeValue}
+              onChange={(value: string) => handleChange(locale, value)}
+              readOnly={readOnly}
+              titleRightSection={<LocaleBadge locale={locale} />}
+              mt="0"
+              mb="0"
+              ml="0"
+              classNames={{
+                input: "alt-text-input-class",
+              }}
+              leftSectionPointerEvents="none"
+              leftSection={
+                <IconAlt
+                  size={20}
+                  stroke={1.5}
+                  color={theme.other?.colors?.amp_ocean.amp_ocean_30}
+                />
+              }
+              rightSection={
+                <>
+                  {altText?.locales[locale] && (
+                    <Tooltip
+                      label="Refresh with the latest ALT text for this locale"
+                      position="top"
+                      offset={5}
                     >
-                      <IconWorldShare size={20} stroke={2} />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              </>
-            }
-          />
+                      <IconButton
+                        variant="subtle"
+                        onClick={() => handleClick(locale)}
+                        disabled={loading}
+                      >
+                        <IconWorldShare size={14} stroke={2} />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </>
+              }
+            />
+          </ComponentSpacer>
         ))}
       </CollapsibleContainer>
     </>
