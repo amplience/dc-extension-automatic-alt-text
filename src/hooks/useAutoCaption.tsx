@@ -12,7 +12,7 @@ export function useAutoCaption() {
     if (!ready || !imageRef) {
       return;
     }
-    console.log("useAutoCaption", autoCaption);
+
     if (autoCaption === false) {
       setAutoCaptionEnabled(false);
       return;
