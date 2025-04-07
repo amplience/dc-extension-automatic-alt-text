@@ -17,7 +17,60 @@ For developers, it ensures that the alt text is available in the content form an
 - Ability to choose locale for text fields
 - Ability to click to refresh all alt text
 - Ability to refresh alt text for individual localised fields
-- Ability to manually create alt text or edit in Dyanmic Content
+- Ability to manually create alt text or edit in Dynamic Content
+
+## User Guide
+
+This section describes how to use this extension from a user perspective in the CMS (Dynamic Content).
+
+### General information
+
+[Automatic Alt Text](https://amplience.com/developers/docs/release-notes/2024/alt-text-generation/) uses AI to generate alt text for image assets in the Amplience Content Hub.
+
+This process is not always immediate so the following circumstances may require refreshing the alt text via the UI if no alt text is availble at the time of selecting an image:
+
+- Image has just been uploaded.
+- Image as just been edited in [Image Studio](https://amplience.com/developers/docs/amplience-studios/image-studio/) via one of the extensions and saved.
+
+See the [Limitations](#limitations) section for further guidance.
+
+### Standard text field
+
+The text field behave as normal text field and can be edited as such.
+
+Clicking the Globe icon at the end of the text field (highlighted in red) will refresh the 'Default' alt text for that asset if available. This button will only show if alt text is available for this asset:
+
+![Fetch in text line](media/text-line-fetch-standard.png)
+
+If using [Item level localisation](https://amplience.com/developers/docs/user-guides/produce-content/localize/#content-item-localization) this allows you to quickly select the right localised alt text for your content.
+
+When an asset is selected, if alt text is available for the asset a series of 'quick locale selector' buttons will be displayed below the text field.
+
+Only options with alt text available will be displayed. The order of the locales displayed is the same order as the Alt text assigned to the image asset in Content Hub:
+
+![Locale buttons](media/locale-chips.png)
+
+If more locales are available than fit into one line, an option to show more is displayed to see all locales:
+
+![Locale buttons expand](media/locale-chips-expand.png)
+
+### Localised text field
+
+The order of the text fields displayed is the order of the locales for your Dynamic Content Hub.
+
+The text fields behave as normal localised text fields and can be edited as such.
+
+Clicking the 'Refresh alt texts' button will auto populate all available alt text values for each locale if available:
+
+![Refresh All Button](media/refresh-all.png)
+
+Clicking the Globe icon at the end of the text field (highlighted in red) will refresh the alt text for that locale. This icon is only visible if alt text is available for that locale:
+
+![Fetch in text line](media/text-line-fetch-localised.png)
+
+Clicking the "Clear all" button will clear Alt text for all locales:
+
+![Clear All Button](media/clear-all.png)
 
 ## How to install
 
@@ -225,18 +278,20 @@ If the extension is used for a localised text field with field level localisatio
 }
 ```
 
-### Auto caption
+### Disabling Auto caption
 
-If enabled, the extension will automatically fetch generated alt text from the image asset when the image property is populated instead of requiring the user to manually press the generate button.
+The extension will automatically fetch generated alt text from the image asset when the image property is populated instead of requiring the user to manually press the generate button.
 
 Alt text will automatically update in two instances:
 
 - a new image is added where none exists
 - an existing image is changed
 
+If you wish to disable auto caption, then turn use the following in your extension parameters:
+
 ```json
 {
-  "autoCaption": true
+  "autoCaption": false
 }
 ```
 
