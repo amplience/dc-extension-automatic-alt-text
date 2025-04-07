@@ -161,11 +161,17 @@ export function LocalizedAltTextInput({
         description={withHeader && schema.description}
         setOpen={setOpen}
         titleRightSection={
-          <div onClick={(e) => e.stopPropagation()}>
-            <Examples
-              examples={["Pulls in Alt text from Content Hub for all locales"]}
-            />
-          </div>
+          <>
+            {open && (
+              <div onClick={(e) => e.stopPropagation()}>
+                <Examples
+                  examples={[
+                    "Pulls in Alt text from Content Hub for all locales",
+                  ]}
+                />
+              </div>
+            )}
+          </>
         }
         variant="filled"
       >
