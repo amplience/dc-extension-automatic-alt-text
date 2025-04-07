@@ -79,7 +79,7 @@ export function AltTextInput({
   return (
     <>
       <TextInput
-        label={schema.title}
+        title={schema.title}
         description={schema.description}
         fieldSchema={schema}
         value={String(value || "")}
@@ -88,6 +88,7 @@ export function AltTextInput({
         classNames={{
           input: "alt-text-input-class",
         }}
+        examples={["Pulls in Alt text from Content Hub for all locales"]}
         leftSectionPointerEvents="none"
         leftSection={
           <IconAlt

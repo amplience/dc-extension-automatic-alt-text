@@ -1,6 +1,7 @@
 import {
   Button,
   CollapsibleContainer,
+  Examples,
   IconButton,
   LocaleBadge,
   TextInput,
@@ -169,6 +170,19 @@ export function LocalizedAltTextInput({
         title={withHeader && schema.title}
         description={withHeader && schema.description}
         setOpen={setOpen}
+        titleRightSection={
+          <>
+            {open && (
+              <div onClick={(e) => e.stopPropagation()}>
+                <Examples
+                  examples={[
+                    "Pulls in Alt text from Content Hub for all locales",
+                  ]}
+                />
+              </div>
+            )}
+          </>
+        }
         variant="filled"
       >
         <Flex
