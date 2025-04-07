@@ -1,7 +1,6 @@
 import {
   Button,
   CollapsibleContainer,
-  Examples,
   IconButton,
   LocaleBadge,
   TextInput,
@@ -19,6 +18,7 @@ import { useAutoCaption } from "../hooks/useAutoCaption";
 import { theme } from "@amplience/ui-styles";
 import { useUiParams } from "../hooks/useUiParams";
 import { FieldSchema } from "dc-extensions-sdk/dist/types/lib/components/Field";
+import { InfoPopover } from "./InfoPopover";
 
 type LocalizedValue = Record<string, string>;
 
@@ -174,9 +174,10 @@ export function LocalizedAltTextInput({
           <>
             {open && (
               <div onClick={(e) => e.stopPropagation()}>
-                <Examples
-                  examples={[
+                <InfoPopover
+                  paragraphs={[
                     "Pulls in Alt text from Content Hub for all locales",
+                    "Docs: https://github.com/amplience/dc-extension-automatic-alt-text",
                   ]}
                 />
               </div>

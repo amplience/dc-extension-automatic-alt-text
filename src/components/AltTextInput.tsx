@@ -10,6 +10,7 @@ import { theme } from "@amplience/ui-styles";
 import { FieldSchema } from "dc-extensions-sdk/dist/types/lib/components/Field";
 import { ExtensionParms } from "../hooks/useExtension";
 import { useOverflow } from "../hooks/useOverflow";
+import { InfoPopover } from "./InfoPopover";
 
 interface AltTextInputProps {
   value: string;
@@ -88,7 +89,6 @@ export function AltTextInput({
         classNames={{
           input: "alt-text-input-class",
         }}
-        examples={["Pulls in Alt text from Content Hub for all locales"]}
         leftSectionPointerEvents="none"
         leftSection={
           <IconAlt
@@ -122,6 +122,14 @@ export function AltTextInput({
               </Tooltip>
             )}
           </>
+        }
+        titleRightSection={
+          <InfoPopover
+            paragraphs={[
+              "Pulls in Alt text from Content Hub for all locales",
+              "Docs: https://github.com/amplience/dc-extension-automatic-alt-text",
+            ]}
+          />
         }
       />
 
