@@ -15,7 +15,7 @@ Screenshot of extension on localised text field:
 ## Key features
 
 - Works with both standard text and localised text fields
-- Ability to point to any native Amplience image
+- Ability to point to any native Amplience image (including those within extensions)
 - Setting to turn on / off automatic population of fields on image selection
 - Ability to choose locale for text fields
 - Ability to click to refresh all alt text
