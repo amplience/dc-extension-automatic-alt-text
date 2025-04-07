@@ -135,6 +135,16 @@ export function LocalizedAltTextInput({
     setPreventAutoCaption(false);
   };
 
+  const handleClearAll = () => {
+    const cleared = Object.keys(localizedValue).reduce((acc, key) => {
+      acc[key] = "";
+      return acc;
+    }, {} as LocalizedValue);
+
+    setLocalizedValue(cleared);
+    onChange(transformToLocalizedString(cleared));
+  };
+
   useEffect(() => {
     if (preventAutoCaption) {
       return;
@@ -179,25 +189,31 @@ export function LocalizedAltTextInput({
             offset={5}
           >
             <Button
-              variant="ghost"
+              variant="secondary"
               p="s"
               m="s"
               leftSection={
-                <IconAlt
-                  size={24}
-                  color={theme.other?.colors?.amp_ocean.amp_ocean_30}
-                />
-              }
-              rightSection={
                 <IconRefresh
-                  size={24}
+                  size={14}
                   color={theme.other?.colors?.amp_ocean.amp_ocean_100}
                 />
               }
               onClick={handleRefetch}
               disabled={loading}
             >
-              Refresh
+              Refresh alt texts
+            </Button>
+          </Tooltip>
+          <Tooltip label="Clear all Alt text" position="top" offset={5}>
+            <Button
+              variant="tertiary"
+              size="md"
+              p="s"
+              m="s"
+              onClick={handleClearAll}
+              disabled={loading}
+            >
+              Clear All
             </Button>
           </Tooltip>
         </Flex>
@@ -238,7 +254,7 @@ export function LocalizedAltTextInput({
                       onClick={() => handleClick(locale)}
                       disabled={loading}
                     >
-                      <IconWorldShare size={20} stroke={2} />
+                      <IconWorldShare size={14} stroke={2} />
                     </IconButton>
                   </Tooltip>
                 )}
