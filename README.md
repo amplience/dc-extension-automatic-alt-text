@@ -249,6 +249,8 @@ Alt text will automatically update in two instances:
 - The Image object that you configure to point to MUST be a standard Amplience image object as per the [data type](https://amplience.com/developers/docs/schema-reference/data-types/#image) and associated image link.
 - The extension pulls in alt text from the Amplience Content Hub to be used in Dynamic Content. Any edits / changes are in Dynamic Content only and not saved back to Content Hub.
 - Locales in Dynamic Content must match the locales for [Automatic Alt Text](https://amplience.com/developers/docs/release-notes/2024/alt-text-generation/) in Content Hub for population.
+- Localised fields do not support min / max / pattern validation.
+- Localised fields support required validation as a combination of all available alt text
 
 ## Development
 
