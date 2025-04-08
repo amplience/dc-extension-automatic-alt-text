@@ -201,7 +201,7 @@ export function LocalizedAltTextInput({
             />
           )}
           <Tooltip
-            label="Fetch ALT Text from Content Hub for all available locales"
+            label="Fetch Alt text from Content Hub for all available locales"
             position="top"
             offset={5}
           >
@@ -262,7 +262,7 @@ export function LocalizedAltTextInput({
                 <>
                   {altText?.locales[locale] && (
                     <Tooltip
-                      label="Refresh with the latest ALT text for this locale"
+                      label="Refresh with the latest Alt text for this locale"
                       position="top"
                       offset={5}
                     >
