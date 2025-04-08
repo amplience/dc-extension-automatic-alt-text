@@ -101,7 +101,7 @@ export function AltTextInput({
           <>
             {altText?.locales && (
               <Tooltip
-                label="Refresh with the latest ALT text for this locale"
+                label="Refresh with the latest Alt text for this locale"
                 position="top"
                 offset={5}
               >
