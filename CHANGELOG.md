@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/amplience/dc-extension-automatic-alt-text/compare/v1.0.0...v1.0.1) (2025-04-09)
+
+
+### Bug Fixes
+
+* labelling permission issue ([efc922f](https://github.com/amplience/dc-extension-automatic-alt-text/commit/efc922f6070bf0d8a058d8c2195e108b7df093d1))
+* labelling permission issue ([881523d](https://github.com/amplience/dc-extension-automatic-alt-text/commit/881523d59119374db3da3957b04727efe89fedb7))
+
 ## [1.0.0](https://github.com/amplience/dc-extension-automatic-alt-text/compare/v1.0.0...v1.0.0) (2025-04-08)
 
 
